@@ -1,51 +1,47 @@
 num_observations = 500;
 min_time = 0;
-max_time = 10^6;
-min_periods = 1;
-max_periods = 3;
+max_time = 10^9;
 min_components = 1;
-max_components = 7;
+max_components = 6;
 min_period = 0.1;
 max_period = 50;
 min_light = 12;
 max_light = 18;
-min_amp = -1;
-max_amp = 1;
+min_amp = 0;
+max_amp = 2;
 min_phi = 0;
 max_phi = 2*pi;
-err = 0;%10^-10;
+err = 10^-5;
+save = 0;
+%for num_periods = 1:4
+min_periods = 2;
+max_periods = 2;
 
 t = sort(unifrnd(min_time, max_time, num_observations, 1));
 periodicities = floor(unifrnd(min_periods, max_periods+1, 1, 1));
 p = sort(unifrnd(min_period, max_period, 1, periodicities), 'descend');
 n = floor(unifrnd(min_components, max_components+1, 1, periodicities));
-A = zeros(periodicities, max(n), 2);
+A = zeros(periodicities, max(n));
+B = zeros(periodicities, max(n));
 for p_i = 1:periodicities
     zs = zeros(1, max(n) - n(p_i));
-    %A(p_i, :, 1) = [unifrnd(min_amp,max_amp,2,n(p_i)) ...
-    %                    ./ 10 .^ [1:n(p_i); 1:n(p_i)] ...
-    %                zeros(2, max(n) - n(p_i))]';%zs];
-    A(p_i, :, 1) = [unifrnd(min_amp,max_amp,1,n(p_i))./10.^(1:n(p_i)) zs];
-    A(p_i, :, 2) = [unifrnd(min_amp,max_amp,1,n(p_i))./10.^(1:n(p_i)) zs];
+    A(p_i, :) = [unifrnd(min_amp,max_amp,1,n(p_i))./10.^(1:n(p_i)) zs];
+    B(p_i, :) = [unifrnd(min_amp,max_amp,1,n(p_i))./10.^(1:n(p_i)) zs];
 end
 
 A0 = unifrnd(min_light, max_light, 1, 1);
 m = ones(num_observations, 1) * A0 + normrnd(0, err, num_observations, 1);
 for ii = 1:num_observations
     for jj = 1:periodicities
-        ph = mod(t(ii) ./ p(jj), 1);
+        ph = t(ii) ./ p(jj);
         for kk = 1:n(jj)
-            for ll = 0:1
-                m(ii) = m(ii) + A(jj,kk,ll+1) * sin(2*pi*kk*ph + ll*pi/2);
-            end
-            %m(ii) = m(ii) + ...
-            %    A(jj, kk, 1) * cos(2*pi*kk * mod(t(ii) ./ p(jj), 1)) + ...
-            %    A(jj, kk, 2) * sin(2*pi*kk * mod(t(ii) ./ p(jj), 1));
+            m(ii) = m(ii) + A(jj, kk) * sin(2*pi*kk*ph) ...
+                          + B(jj, kk) * cos(2*pi*kk*ph);
         end
     end
 end
 
-figure
+figure(h)
 set(gca,'YDir','reverse')
 subplot(1, periodicities+1, 1)
 plot(t, m, '+')
@@ -70,10 +66,8 @@ for jj = 1:periodicities
     x = 0:.01:1;
     fx = A0;
     for kk = 1:n(jj)
-        for ll = 0:1
-            ph = x;%mod(x+x(m_index),1);
-            fx = fx + A(jj,kk,ll+1) * sin(2*pi*kk*ph + ll*pi/2);
-        end
+        fx = fx + A(jj,kk) * sin(2*pi*kk*x) ...
+                + B(jj,kk) * cos(2*pi*kk*x);
     end
     plot(x, fx, 'r', 'LineWidth', 2)
     hold off
@@ -82,3 +76,5 @@ for jj = 1:periodicities
     xlabel('Phase')
     title(['P = ' num2str(p(jj)) 'd'])
 end
+if save; saveas(h, ['plots/' int2str(num_periods) '.png']); end;
+%end
