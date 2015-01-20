@@ -1,0 +1,408 @@
+\documentclass{beamer}
+%
+% Choose how your presentation looks.
+%
+% For more themes, color themes and font themes, see:
+% http://deic.uab.es/~iblanes/beamer_gallery/index_by_theme.html
+%
+\mode<presentation>
+{
+  \usetheme{Warsaw}%Madrid}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{beaver}%seahorse % or try albatross, beaver, crane, ...
+  \usefonttheme{default}  % or try serif, structurebold, ...
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{caption}[numbered]
+} 
+
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{tabularx}
+\pgfplotsset{compat=1.10}
+
+\newlength\figureheight
+\newlength\figurewidth
+\setlength\figureheight{0.65\textheight}
+\setlength\figurewidth{\textwidth}
+
+\title[Optimal Light Curve Modeling of Cepheid-Like Variables]{Optimal Light Curve Modeling of \\Cepheid-Like Variables}
+\author{Earl Bellinger}
+\institute{} 
+\date{\today}
+
+\begin{document}
+%\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+%\frame{\maketitle}
+\begin{frame}
+  \titlepage
+  \begin{center}
+  %\begin{tabular}{ | C{2.6cm} | C{1.3cm} | C{1.3cm} | C{2.6cm} |} \hline
+  \begin{tabular}{>{\centering\arraybackslash}p{2.6cm} 
+                   >{\centering\arraybackslash}p{1.5cm} 
+                   >{\centering\arraybackslash}p{1.5cm} 
+                   >{\centering\arraybackslash}p{2.6cm}} 
+    \includegraphics[height=1.8cm,keepaspectratio]{oswego.jpg} &
+    \includegraphics[height=1.8cm,keepaspectratio]{iu.png} &
+    \includegraphics[height=1.8cm,keepaspectratio]{iucaa.jpg} &
+    \raisebox{.05\height}{\includegraphics[width=2.58cm,height=1.5cm]{nist.png}} 
+\end{tabular}
+\end{center}
+\end{frame}
+
+% Uncomment these lines for an automatically generated outline.
+%\begin{frame}{Outline}
+%  \tableofcontents
+%\end{frame}
+
+\section{Intrinsic Variables as Multiperiodic Oscillators}
+\subsection{Motivation}
+\begin{frame}{The Cepheid Period-Luminosity Relation}
+\begin{center}
+asdf
+\end{center}
+\end{frame}
+
+\subsection{Trigonometric View of Multiperiodic Oscillation}
+\begin{frame}{Trigonometric View of Multiperiodic Oscillation}
+Let 
+\begin{center}
+\begin{tabular}{c c r}
+\textbf{Variable} & \textbf{Type} & \textbf{Meaning} \\ \hline \hline
+$\boldsymbol \omega$ & vector & angular frequencies \\
+$\mathbf A$ & matrix & sine amplitudes \\ 
+$\boldsymbol \Phi$ & matrix & phases \\
+$j$ & index & $j$th angular frequency \\
+$k$ & index & $k$th wavelength \\ \hline
+\end{tabular}
+\end{center}
+The magnitude $m$ at time $t$ is then
+$$m(t | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) =
+    \sum_j^{|\boldsymbol \omega|} \sum_k^{|\mathbf{A_j}|}
+      A_{jk } \sin \left( k \omega_j t + \Phi_{jk} \right) $$
+\end{frame}
+
+%\subsection{Synthetic Data}
+\begin{frame}{Example of a Multiperiodic Oscillator}
+\begin{figure}
+\centering
+\input{mpo.tikz}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{Noisy, Unevenly Spaced Samples}
+\begin{figure}
+\centering
+\input{mpo-points.tikz}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{Projection into Fourier Space}
+\begin{figure}
+\centering
+\input{mpo-fourier.tikz}
+\end{figure} 
+\end{frame}
+
+%\begin{frame}{Classical Stellar Modelling}
+%\begin{itemize}
+%\item Discover angular frequencies $\boldsymbol \omega$ using a periodogram method such as the CLEANest algorithm (Foster 1995)
+%\item Linearize the model unknowns with 
+%\begin{align*} A \sin(x + \Phi)
+%  &= A \cos(\Phi) \sin(x) + A \sin(\Phi) \cos(x)
+%\\&= S \sin(x) + C \cos(x) \end{align*}
+%\item Build a linear coefficient matrix and solve with linear least squares 
+%\begin{align*}
+%\hat{\mathbf{w}} &= \underset{\mathbf{w}}{\arg\min}\, \sum_{i=1}^{N} \Big| m_i - \sum_{j=1}^{2n+1} X_{ij} w_j \Big|^2 
+%\\ &= \underset{\mathbf{w}}{\arg\min}\, \bigl\|\mathbf m - \textsf{\textbf X} \mathbf w \bigr\|^2
+%\\ &= (\textsf{\textbf{X}}^\text{T} \textsf{\textbf{X}})^{-1} %\textsf{\textbf{X}}^\text{T} \mathbf{m}
+%\end{align*}
+%\end{itemize}
+%\end{frame}
+
+%\begin{frame}{Linearization of the Objectives}
+%Now that $\boldsymbol \omega$ is a constant, we can leverage the fact that
+%\begin{align*} A \sin(x + \Phi)
+%  &= A \cos(\Phi) \sin(x) + A \sin(\Phi) \cos(x)
+%\\&= B \sin(x) + C \cos(x) \end{align*}
+%to linearize our objective function like so:
+%\begin{align*}
+%(\boldsymbol{\hat \omega}, \mathbf {\hat B}, \mathbf{\hat C}) =
+%  \underset{(\boldsymbol \omega, \mathbf a, \mathbf b)}{\arg\min}
+%    & \sum_i \left(m_i - \sum_{jk} B_{jk } \sin \left(k \omega_j t_i \right)
+%                                 + C_{jk } \cos \left(k \omega_j t_i \right) 
+%             \right)^2
+%  \\&+ \lambda \sum_{jk} |B_{jk}| + |C_{jk}| 
+%\end{align*}
+%\end{frame}
+
+\subsection{Classical Light Curve Modeling}
+\begin{frame}{Classical Light Curve Modeling}%Building the Linear Equation Coefficient Matrix}
+\begin{center}
+\begin{tabular}{lcr}
+\textbf{Variable} & \textbf{Size} & \textbf{Meaning} \\ \hline\hline
+$\mathbf t$ & $n$ & times \\
+$\boldsymbol \omega$ & $p$ & angular frequencies \\
+$\mathbf S$, $\mathbf C$ & ${p\times q}$ & sine/cosine amplitudes \\ 
+$\mathbf X$ & ${n \times (2pq+1)}$ & coefficient matrix \\ \hline
+\end{tabular}
+\end{center}
+%Now we can build a feature matrix of size ${n \times (2pq+1)}$ with 
+Find $\boldsymbol \omega$ via periodogram, then solve $(\textsf{\textbf{X}}^\text{T} \textsf{\textbf{X}})^{-1} \textsf{\textbf{X}}^\text{T} \mathbf{m}$ with $\textbf{X} = $ \setlength{\arraycolsep}{4pt} $$ 
+\hspace*{-3mm} \begin{bmatrix}
+1 & \sin(\omega_1 t_1)
+  & \cos(\omega_1 t_1) & \cdots
+  & \cos(q \omega_1 t_1)
+  & \sin(\omega_2 t_1) & \cdots
+  & \cos(q \omega_p t_1) \\[2.2ex]
+
+1 & \sin(\omega_1 t_2)
+  & \cos(\omega_1 t_2) & \cdots
+  & \cos(q \omega_1 t_2)
+  & \sin(\omega_2 t_2) & \cdots
+  & \cos(q \omega_p t_2) \\[2.2ex]
+
+\vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\[2.2ex]
+
+1 & \sin(\omega_1 t_n)
+  & \cos(\omega_1 t_n) & \cdots
+  & \cos(q \omega_1 t_n)
+  & \sin(\omega_2 t_n) & \cdots
+  & \cos(q \omega_p t_n) %\\[2.2ex]
+\end{bmatrix} $$
+\end{frame}
+
+\begin{frame}{Noisy, Unevenly Spaced Samples}
+\begin{figure}
+\centering
+\input{mpo-points.tikz}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{Least Squares Fit}
+\begin{figure}
+\centering
+\input{mpo-badfit.tikz}
+\end{figure} 
+\end{frame}
+
+\section{Objectives and Constraints for Model Discovery}
+\begin{frame}{Objectives and Constraints for Model Discovery}
+We want
+\begin{itemize}
+\item To estimate parameters $(\boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})$ corresponding to a multiperiodic oscillator $\hat m$ that is best supported by the observed data ($\mathbf{t}, \mathbf{m}, \boldsymbol \epsilon$) \pause 
+
+\item The find the simplest model; that is, the one with the fewest components needed to describe everything we witnessed 
+$$\min \left\| \boldsymbol{\hat \omega} \right\|_1 \text{ and } \min \left\| \mathbf{\hat{A}} \right\|_1$$ \pause
+
+\item To minimize loss between our model and the observations
+$$\min \left\| \mathbf m - \hat m(\mathbf t | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})\right\|_2$$ \pause
+
+\item And to be within the bounds of measurement error
+$$|m_i - \hat m(t_i | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})| \leq \epsilon_i \text{ for all i}=1\ldots |\mathbf{m}| $$
+
+\end{itemize}
+\end{frame}
+
+\section{An Optimization View of Photometric Stellar Modelling}
+\begin{frame}{An Optimization View of Photometric Stellar Modelling}
+\vspace{-3mm}
+\begin{align*}
+&&(\boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi}) =
+  \underset{(\boldsymbol \omega, \mathbf A, \boldsymbol \Phi)}{\arg\min} &
+  \left(\left\|\boldsymbol \omega \right\|_1,
+        \left\|\mathbf{A} \right\|_1,
+        \left\| \mathbf{m} - \hat m(\mathbf{t}, \boldsymbol \omega, \mathbf A, \boldsymbol \Phi)\right\|_2
+  \right) 
+\\ &&\text{such that } &
+  |m_i - \hat m(t_i | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi)| \leq \epsilon_i 
+    \; \text{for all } i=1\ldots |\mathbf{m}|
+\\ &&\text{where } &
+  \hat m(t | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) =
+    \sum_j^{|\boldsymbol \omega|} \sum_k^{|\mathbf{A_j}|}
+      A_{jk } \sin \left( k \omega_j t + \Phi_{jk} \right) 
+\end{align*}
+\only<1-1>{
+  \begin{center}
+    \begin{tabular}{c|c|c|c|c}
+      \textbf{Variable} & \textbf{Type} & \textbf{Index} & \textbf{Meaning} & \textbf{Given?} \\ \hline\hline
+      $\mathbf{t}$ & Vector & $i$ & Times of Observation & $\checkmark$ \\
+      $\mathbf{m}$ & Vector & $i$ & Observed Magnitudes & $\checkmark$ \\
+      $\boldsymbol \epsilon$ & Vector & $i$ & Observation Errors & $\checkmark$ \\
+      $\boldsymbol \omega$ & Vector & $j$ & Angular Frequencies & $\times$ \\
+      $\mathbf A$ & Matrix & $j,k$ & Amplitudes & $\times$ \\
+      $\boldsymbol \Phi$ & Matrix & $j,k$ & Phases & $\times$ %\\$F$ & Function & Fourier fit 
+    \end{tabular}
+  \end{center}
+}
+\only<2-2>{
+  \begin{block}{\textbf{Properties of the Optimization}}
+    \begin{tabular}{r c p{6.5cm}}
+      \textbf{Multiobjective} &$\rightarrow$& Many criteria to optimize simultaneously\\
+      \textbf{Constrained} &$\rightarrow$& Solution must satisfy specific conditions \\
+      \textbf{Nonlinear} &$\rightarrow$& Constraints and objectives not directly proportional to inputs
+    \end{tabular}
+  \end{block}
+}
+\end{frame}
+
+
+%\subsection{Simplification with Independent Period Discovery}
+%\begin{frame}{Simplification with Independent Period Discovery}
+%Instead of estimating the frequencies $\boldsymbol \omega$ in the observed data simultaneously with finding the amplitude components, let's solve for these first independently and use that estimate as a constant in our optimization
+%\begin{itemize}
+%\item Least Squares Spectral Analysis (``Lomb-Scargle'') 
+%\item Conditional entropy periodogram 
+%\item CLEANest algorithm 
+%\item etc
+%\end{itemize}
+%\end{frame}
+
+\subsection{Scalarization, Linearization and Regularization}
+\begin{frame}{Scalarization of the Objectives}
+%We can reduce the complexity of our optimization problem by scalarizing our objectives with the Least Absolute Shrinkage and Selection Operator (LASSO):
+We can apply the Least Absolute Shrinkage and Selection Operator (LASSO) to scalarize our objectives:
+\begin{align*}(\boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})
+  = \underset{(\boldsymbol \omega, \mathbf A, \boldsymbol \Phi)}{\arg\min}
+  & \sum_i \left(m_i - \sum_{jk} A_{jk } \sin \left(k \omega_j t_i + \Phi_{jk} \right) \right)^2
+\\&+ \lambda \sum_{jk} |A_{jk}|
+\end{align*}
+where the shrinkage parameter $\lambda$ can be chosen e.g.~via cross-validation. 
+\begin{thebibliography}{1}
+  \beamertemplatearticlebibitems
+  \bibitem{lasso}
+    Robert Tibshirani
+    \newblock Regression Shrinkage and Selection via the Lasso
+    \newblock {\em Journal of the Royal Statistical Society}, 1996
+    \end{thebibliography}
+\end{frame}
+
+\subsection{Solving the Approximate Optimization Problem}
+\begin{frame}{Solving the Approximate Optimization Problem}
+\begin{block}{The Lasso Solution}
+We can now use the linear coefficient matrix $\mathbf X$ from before to solve
+$$\mathbf{\hat w} = \underset{\mathbf w}{\arg\min} \; \| \mathbf {m} - \mathbf {X} \mathbf {w} \|_2 + \lambda \| \mathbf{w} \|_1$$
+using e.g.~coordinate descent (Wu, Tong, and Lange, 2008).
+\end{block}
+\vspace{5mm}
+The entries of $\mathbf{\hat S}$ and $\mathbf{\hat C}$ can be found in successive columns of $\mathbf{\hat{w}}$, and finally $\mathbf{\hat A}$ and $\boldsymbol{\hat{\Phi}}$ can be restored using trigonometry with
+$$A_{jk} = \sqrt{S_{jk}^2 + C_{jk}^2} \; \text{ and } \; \Phi_{jk} = \tan^{-1} (C_{jk} / S_{jk}).$$
+\end{frame}
+
+\begin{frame}{Least Squares Fit}
+\begin{figure}
+\centering
+\input{mpo-badfit.tikz}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{Lasso Fit}
+\begin{figure}
+\centering
+\input{mpo-lasso.tikz}
+\end{figure} 
+\end{frame}
+
+\subsection{To the Stars!}
+\begin{frame}{OGLE-LMC-CEP-0209 Photometry}
+\begin{figure}
+\input{OGLE-LMC-CEP-0209-photometry.tikz}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{Phased with $P_1$}
+\begin{figure}
+\input{OGLE-LMC-CEP-0209-phased.tikz}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{Least Squares Fit}
+\begin{figure}
+\input{OGLE-LMC-CEP-0209-ols.tikz}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{LASSO}
+\begin{figure}
+\input{OGLE-LMC-CEP-0209-lasso.tikz}
+\end{figure} 
+\end{frame}
+
+\begin{frame}{Lasso vs.~Baart on the OGLE Catalog}
+%\begin{table*}
+  \begin{center}
+  %\scalebox{0.63}{
+  %\resizebox{\textwidth}{0.35\textheight}{
+  \adjustbox{max height=\dimexpr\textheight-5cm\relax,
+             max width=\textwidth}{
+    \begin{tabular}{c c r c c l}\hline %{ c c c c c c } 
+\textbf{Galaxy} & \textbf{Type} & \textbf{\# Stars} & \textbf{Median Lasso} $\mathbf{R^2}$ & \textbf{Median Baart} $\mathbf{R^2}$ & \textbf{Significance*} \\ \hline \hline
+(all)&(all)&51018&0.8654 &0.8550 &$p< 0.001$\\
+(all)&CEP&7448&0.9833 &0.9826 &$p= 0.00862 $\\
+(all)&T2CEP&603&0.9133 &0.8949 &$p= 0.242 $\\
+(all)&ACEP&89&0.9700 &0.9672 &$p= 0.0223 $\\
+(all)&RRLYR&42878&0.8381 &0.8265 &$p< 0.001$\\
+LMC&(all)&27273&0.7883 &0.7800 &$p< 0.001$\\
+LMC&CEP&3070&0.9860 &0.9853 &$p= 0.0765 $\\
+LMC&T2CEP&203&0.8653 &0.8540 &$p= 0.484 $\\
+LMC&ACEP&83&0.9704 &0.9639 &$p= 0.00672 $\\
+LMC&RRLYR&23917&0.7631 &0.7544 &$p< 0.001$\\
+SMC&(all)&6619&0.9439 &0.9423 &$p= 0.00446 $\\
+SMC&CEP&4353&0.9816 &0.9810 &$p= 0.0325 $\\
+SMC&T2CEP&43&0.7827 &0.6882 &$p= 0.306 $\\
+SMC&ACEP&6&0.9277 &0.9880 &$p= 0.953 $\\
+SMC&RRLYR&2217&0.6540 &0.6455 &$p= 0.0375 $\\
+BLG&(all)&17126&0.9582 &0.9532 &$p< 0.001$\\
+BLG&CEP&25&0.9843 &0.9641 &$p= 0.254 $\\
+BLG&T2CEP&357&0.9488 &0.9462 &$p= 0.275 $\\
+BLG&RRLYR&16744&0.9583 &0.9533 &$p< 0.001$\\ \hline
+\multicolumn{6}{l}{*P-values obtained by paired Mann-Whitney $U$ tests}
+     \end{tabular}} 
+  \end{center}
+%\end{table*}
+\end{frame}
+
+%\begin{frame}{Leavitt's Law in the SMC and LMC}
+%\begin{figure}
+%\centering
+%\includegraphics[height=0.8\textheight,keepaspectratio]{mean-light-pl.png}
+%\end{figure}
+%\end{frame}
+
+%\begin{frame}{Mean Light Difference Between SMC and LMC}
+%\begin{figure}
+%\centering
+%\includegraphics[height=0.8\textheight,keepaspectratio]{pl-difference.png}
+%\end{figure}
+%\end{frame}
+
+%\begin{frame}{Multiphase Difference Between SMC and LMC}
+%\begin{figure}
+%\centering
+%\includegraphics[height=0.8\textheight,keepaspectratio]{pl-difference-2.png}
+%\end{figure}
+%\end{frame}
+
+\begin{frame}{Thanks for your attention!}
+\begin{center} \textbf{Questions?} \end{center}
+%\begin{block}{Acknowledgements}
+%This is a joint work with Professor Shashi M. Kanbur and Daniel Wysocki at SUNY Oswego.
+%\end{block}
+
+  \begin{center}
+  %\begin{tabular}{ | C{2.6cm} | C{1.3cm} | C{1.3cm} | C{2.6cm} |} \hline
+  \begin{tabular}{>{\centering\arraybackslash}p{2.6cm} 
+                   >{\centering\arraybackslash}p{1.5cm} 
+                   >{\centering\arraybackslash}p{1.5cm} 
+                   >{\centering\arraybackslash}p{2.6cm}} 
+    \includegraphics[height=1.8cm,keepaspectratio]{oswego.jpg} &
+    \includegraphics[height=1.8cm,keepaspectratio]{iu.png} &
+    \includegraphics[height=1.8cm,keepaspectratio]{iucaa.jpg} &
+    \raisebox{.05\height}{\includegraphics[width=2.58cm,height=1.5cm]{nist.png}} 
+\end{tabular}
+\end{center}
+\end{frame}
+
+\end{document}
