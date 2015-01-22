@@ -1,7 +1,7 @@
 %% Simulation
-num_points = 500;
+num_points = 20;
 err = 0.1;
-x_max = 100*2*pi;
+x_max = 10*2*pi;
 t = 0:0.1:x_max;
 p2 = 0.71;
 m = sin(t) + 0.4 * sin(2*t+pi/4) ...
@@ -17,17 +17,17 @@ usm = sin(ust) + 0.4*sin(2*ust+pi/4) ...
 
 num_p1 = 4;
 num_p2 = 16;
-x = ones(length(ust), 1+num_p1+num_p2);
+X = ones(length(ust), 1+num_p1+num_p2);
 for kk = 2:2:num_p1
-    x(:,kk)   = sin(kk/2*ust);
-    x(:,kk+1) = cos(kk/2*ust);
+    X(:,kk)   = sin(kk/2*ust);
+    X(:,kk+1) = cos(kk/2*ust);
 end
 for kk = 2:num_p2
-    x(:,kk+num_p1)   = sin(p2 * kk/2*ust);
-    x(:,kk+num_p1+1) = cos(p2 * kk/2*ust);
+    X(:,kk+num_p1)   = sin(p2 * kk/2*ust);
+    X(:,kk+num_p1+1) = cos(p2 * kk/2*ust);
 end
 
-w = (x' * x) \ x' * usm;
+w = (X' * X) \ X' * usm;
 
 wm = ones(1, length(t)) * w(1);
 for kk = 2:2:num_p1
@@ -39,7 +39,7 @@ for kk = 2:2:num_p2
             + w(kk+num_p1+1) * cos(p2 * kk/2*t);
 end
 
-[w, FitInfo] = lasso(x, usm);%, 'cv', 10);
+[w, FitInfo] = lasso(X, usm);%, 'cv', 10);
 lm = ones(1, length(t)) * FitInfo.Intercept(1);
 for kk = 2:2:num_p1
     lm = lm + w(kk)   * sin(kk/2*t) ...;
@@ -53,6 +53,7 @@ end
 ymax = max([max(m), max(wm), max(usm), max(lm)]) + 4*err;
 ymin = min([min(m), min(wm), min(usm), min(lm)]) - 4*err;
 
+% Plot time series
 figure;
 plot(t, m, 'color', [.5 0 0], 'LineWidth', 1.5);
 xlabel('t');
@@ -64,9 +65,10 @@ set(gca,'yticklabel',[]);
 set(gca, 'box', 'off');
 set(gca, 'ylim', [ymin, ymax]);
 set(gca, 'xlim', [0, x_max]);
-%matlab2tikz('mpo.tikz', 'height', '\figureheight', ...
-%                         'width', '\figurewidth');
+matlab2tikz('mpo.tikz', 'height', '\figureheight', ...
+                         'width', '\figurewidth');
 
+% Plot points along curve
 figure;
 plot(t, m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 1.5);
 xlabel('t');
@@ -82,9 +84,10 @@ hold on;
 errorbar(ust, usm, ones(1,num_points)*2*err, '.', 'MarkerSize', 7.5,...
          'color', [.5 0 0]);
 hold off;
-%matlab2tikz('mpo-points.tikz', 'height', '\figureheight', ...
-%                                      'width', '\figurewidth');
+matlab2tikz('mpo-points.tikz', 'height', '\figureheight', ...
+                               'width',  '\figurewidth');
 
+% Plot OLS
 figure;
 plot(t, m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 1);
 hold on;
@@ -98,13 +101,13 @@ set(gca,'yticklabel',[]);
 set(gca, 'box', 'off');
 set(gca, 'ylim', [ymin, ymax]);
 set(gca, 'xlim', [0, x_max]);
-hold on;
 errorbar(ust, usm, ones(1,num_points)*2*err, '.', 'MarkerSize', 7.5,...
          'color', [.5 0 0]);
 hold off;
-%matlab2tikz('mpo-badfit.tikz', 'height', '\figureheight', ...
-%                                      'width', '\figurewidth');
+matlab2tikz('mpo-badfit.tikz', 'height', '\figureheight', ...
+                               'width',  '\figurewidth');
 
+% Plot LASSO
 figure;
 plot(t, m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 1);
 hold on;
@@ -118,14 +121,117 @@ set(gca,'yticklabel',[]);
 set(gca, 'box', 'off');
 set(gca, 'ylim', [ymin, ymax]);
 set(gca, 'xlim', [0, x_max]);
-hold on;
 errorbar(ust, usm, ones(1,num_points)*2*err, '.', 'MarkerSize', 7.5,...
          'color', [.5 0 0]);
-%matlab2tikz('mpo-lasso.tikz', 'height', '\figureheight', ...
-%                                      'width', '\figurewidth');                  
-                                  
-                                  
+hold off;
+matlab2tikz('mpo-lasso.tikz', 'height', '\figureheight', ...
+                              'width', '\figurewidth');
 
+% Plot in Fourier space
+figure;
+plot(sin(t), cos(t), '--', 'color', [0.5 0.5 0.5], 'LineWidth', 1);
+xlabel('\sin(\omega_1t)');
+ylabel('\cos(\omega_1t)');
+set(gca,'xtick',[]);
+set(gca,'xticklabel',[]);
+set(gca,'ytick',[]);
+set(gca,'yticklabel',[]);
+hold on;
+plot(X(:,2), X(:,3), '.', 'color', [.5 0 0]);
+hold off;
+matlab2tikz('mpo-fourier-space.tikz', 'height', '\figureheight', ...
+                                      'width', '\figurewidth');
+
+% Plot 3D view
+%subplot(2, 2, 2);
+figure;
+plot3(sin(t), cos(t), m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 0.5);
+xlabel('\sin(\omega_1t)');
+ylabel('\cos(\omega_1t)');
+zlabel('m(t)');
+set(gca,'xticklabel',[]);
+set(gca,'yticklabel',[]);
+set(gca,'zticklabel',[]);
+hold on;
+scatter3(X(:,2), X(:,3), usm, 25, ...
+         repmat([0.5,0,0],numel(usm),1), 'marker', '.');
+for ii = 1:length(usm)
+    plot3([sin(ust(ii)) sin(ust(ii))], [cos(ust(ii)) cos(ust(ii))], ...
+        [usm(ii)-err usm(ii)+err], 'color', [0.5, 0, 0]);
+end
+grid on;
+hold off;
+matlab2tikz('mpo-fourier-scaled.tikz', 'height', '\figureheight', ...
+                                       'width', '\figurewidth');
+%{
+% Pass plane through using LASSO coefficients 
+figure;
+plot3(sin(t), cos(t), m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 0.5);
+xlabel('\sin(\omega_1t)');
+ylabel('\cos(\omega_1t)');
+zlabel('m(t)');
+set(gca,'xticklabel',[]);
+set(gca,'yticklabel',[]);
+set(gca,'zticklabel',[]);
+hold on;
+scatter3(x(:,2), x(:,3), usm, 25, ...
+         repmat([0.5,0,0],numel(usm),1), 'marker', '.');
+for ii = 1:length(usm)
+    plot3([sin(ust(ii)) sin(ust(ii))], [cos(ust(ii)) cos(ust(ii))], ...
+        [usm(ii)-err usm(ii)+err], 'color', [0.5, 0, 0]);
+end
+%{
+P1 = [-1, -1, FitInfo.Intercept(1) - w(2) - w(3)];
+P2 = [ 1, -1, FitInfo.Intercept(1) + w(3) - w(3)];
+P3 = [ 1,  1, FitInfo.Intercept(1) + w(3) + w(3)];
+normal = cross(P1-P2, P1-P3);
+syms asdf1 asdf2 asdf3
+asdfP = [asdf1,asdf2,asdf3];
+realdot = @(u, v) u*transpose(v);
+planefunction = realdot(normal, asdfP-P1);
+%}
+%{
+[sinx, cosx] = meshgrid(-10:0.1:10);
+z = w(2)*sinx + w(3)*cosx + FitInfo.Intercept(1);
+mesh(sinx, cosx, z);
+set(gca, 'ylim', [-1 1]);
+set(gca, 'xlim', [-1 1]);
+set(gca, 'zlim', [-2 2]);
+%}
+grid on;
+hold off;
+%}
+subplot(2, 2, 3);
+plot(sin(t), sin(2*t), '--', 'color', [0.5 0.5 0.5], 'LineWidth', 1);
+xlabel('\sin(\omega_1t)');
+ylabel('\sin(2\omega_1t)');
+set(gca,'xtick',[]);
+set(gca,'xticklabel',[]);
+set(gca,'ytick',[]);
+set(gca,'yticklabel',[]);
+hold on;
+plot(X(:,2), X(:,4), '.', 'color', [.5 0 0]);
+hold off;
+
+subplot(2, 2, 4);
+plot3(sin(t), sin(2*t), m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 0.5);
+xlabel('\sin(\omega_1t)');
+ylabel('\sin(2\omega_1t)');
+zlabel('m(t)');
+set(gca,'xticklabel',[]);
+set(gca,'yticklabel',[]);
+set(gca,'zticklabel',[]);
+hold on;
+scatter3(X(:,2), X(:,4), usm, 15, ...
+         repmat([0.5,0,0],numel(usm),1), 'marker', '.');
+for ii = 1:length(usm)
+    plot3([sin(ust(ii)) sin(ust(ii))], [sin(2*ust(ii)) sin(2*ust(ii))], ...
+        [usm(ii)-err usm(ii)+err], 'color', [0.5, 0, 0]);
+end
+grid on;
+hold off;
+matlab2tikz('mpo-fourier.tikz', 'height', '\figureheight', ...
+                                'width',  '\figurewidth');
 
 
 
@@ -163,17 +269,17 @@ end
 num_p1 = 100;
 num_p2 = 12;
 num_fit = 40;
-x = ones(length(m), 1+num_p1+num_p2);
+X = ones(length(m), 1+num_p1+num_p2);
 for kk = 2:2:num_p1
-    x(:,kk)   = sin(2*pi*kk/2*mod(t/p(1),1));
-    x(:,kk+1) = cos(2*pi*kk/2*mod(t/p(1),1));
+    X(:,kk)   = sin(2*pi*kk/2*mod(t/p(1),1));
+    X(:,kk+1) = cos(2*pi*kk/2*mod(t/p(1),1));
 end
 for kk = 2:num_p2
-    x(:,kk+num_p1)   = sin(2*pi*kk/2*mod(t/p(2),1));
-    x(:,kk+num_p1+1) = cos(2*pi*kk/2*mod(t/p(2),1));
+    X(:,kk+num_p1)   = sin(2*pi*kk/2*mod(t/p(2),1));
+    X(:,kk+num_p1+1) = cos(2*pi*kk/2*mod(t/p(2),1));
 end
 
-[w, FitInfo] = lasso(x, m, 'CV', 3);
+[w, FitInfo] = lasso(X, m, 'CV', 3);
 w = w(:,num_fit);
 %w = (x' * x) \ x' * m;
 
@@ -302,14 +408,14 @@ e = data(:, 3);
 
 num_p1 = 16;
 num_fit = 10;
-x = ones(length(m), 1+num_p1);
+X = ones(length(m), 1+num_p1);
 for kk = 2:2:num_p1
-    x(:,kk)   = sin(2*pi*kk/2*mod(t/p(1),1));
-    x(:,kk+1) = cos(2*pi*kk/2*mod(t/p(1),1));
+    X(:,kk)   = sin(2*pi*kk/2*mod(t/p(1),1));
+    X(:,kk+1) = cos(2*pi*kk/2*mod(t/p(1),1));
 end
 %[w, FitInfo] = lasso(x, m);%, 'CV', 10);
 %w = w(:,num_fit);
-w = (x' * x) \ x' * m;
+w = (X' * X) \ X' * m;
 
 figure
 %subplot(1, length(p)+1, 2)
@@ -373,7 +479,7 @@ name = 'OGLE-LMC-CEP-0209';
 p = 3.1227238;
 num_p1 = 32;
 num_repeats = 2;
-resolution = .001;
+resolution = .001;-
 
 % Parse data
 data = fscanf(fopen([name '.dat'],'r'), '%f %f %f', [3 Inf])';
@@ -382,15 +488,15 @@ m = data(:, 2);
 e = data(:, 3);
 
 % Build feature matrix
-x = ones(length(m), 1+num_p1);
+X = ones(length(m), 1+num_p1);
 for kk = 2:2:num_p1
-    x(:,kk)   = sin(2*pi*kk/2*mod(t/p(1),1));
-    x(:,kk+1) = cos(2*pi*kk/2*mod(t/p(1),1));
+    X(:,kk)   = sin(2*pi*kk/2*mod(t/p(1),1));
+    X(:,kk+1) = cos(2*pi*kk/2*mod(t/p(1),1));
 end
 
 % Fit OLS and Lasso
 ph = 0:resolution:num_repeats;
-[w, FitInfo] = lasso(x, m, 'CV', 3);
+[w, FitInfo] = lasso(X, m, 'CV', 3);
 w = w(:,FitInfo.IndexMinMSE);
 lm = ones(1, length(ph)) * FitInfo.Intercept(FitInfo.IndexMinMSE);
 for kk = 2:2:num_p1
@@ -398,7 +504,7 @@ for kk = 2:2:num_p1
             + w(kk+1) * cos(2*pi*kk/2*ph);
 end
 
-w = (x' * x) \ x' * m;
+w = (X' * X) \ X' * m;
 ols = ones(1, length(ph)) * w(1);
 for kk = 2:2:num_p1
     ols = ols + w(kk)   * sin(2*pi*kk/2*ph) ...
@@ -472,59 +578,40 @@ matlab2tikz([name '-lasso.tikz'], 'height', '\figureheight', ...
 
 %% OGLE-LMC-CEP-0207.dat
 % Inputs
-name = 'OGLE-LMC-CEP-0207';
-p = [0.9990188 0.8019926];
-max_A = [16 8];
+name = 'OGLE-LMC-CEP-0432';
+p = [3.8842199 2.7931983];
+max_A = 10;
 num_repeats = 2;
-resolution = .001;
+resolution = 1;
 
 % Parse data
-data = fscanf(fopen([name '.dat'],'r'), '%f %f %f', [3 Inf])';
+data = fscanf(fopen([name '.dat'], 'r'), '%f %f %f', [3 Inf])';
 t = data(:, 1);
 m = data(:, 2);
 e = data(:, 3);
+ph = [(min(t):resolution:max(t))'; t];
+ph_s = (0:.1:ceil(prod(p)*4))';
 
 % Build feature matrix
-x = ones(length(m), 1+sum(max_A));
-for kk = 2:2:max_A(1)
-    x(:,kk)   = sin(2*pi*kk/2*mod(t/p(1),1));
-    x(:,kk+1) = cos(2*pi*kk/2*mod(t/p(1),1));
-end
-for kk = 2:max_A(2)
-    x(:,kk+max_A(1))   = sin(2*pi*kk/2*mod(t/p(2),1));
-    x(:,kk+max_A(1)+1) = cos(2*pi*kk/2*mod(t/p(2),1));
-end
+ks = cell(1,numel(p)); 
+[ks{:}] = ndgrid(0:max_A);
+ks = reshape(cat(numel(p)+1, ks{:}), [], numel(p));
+X   = [cos(t*(ks*(2*pi./p'))') sin(t*(ks(2:length(ks),:)*(2*pi./p'))')];
+Xph = [cos(ph*(ks*(2*pi./p'))') sin(ph*(ks(2:length(ks),:)*(2*pi./p'))')];
+Xs  = [cos(ph_s*(ks*(2*pi./p'))') sin(ph_s*(ks(2:length(ks),:)*(2*pi./p'))')];
 
 % Fit OLS and Lasso
-%ph = 0:resolution:num_repeats;
-[w, FitInfo] = lasso(x, m, 'CV', 3);
-w = w(:,FitInfo.IndexMinMSE);
-lm = ones(length(t), 1) * FitInfo.Intercept(FitInfo.IndexMinMSE);
-for kk = 2:2:max_A(1)
-    lm = lm + w(kk)   * sin(2*pi*kk/2*mod(t/p(1),1)) ...
-            + w(kk+1) * cos(2*pi*kk/2*mod(t/p(1),1));
-end
-for kk = 2:2:max_A(2)
-    lm = lm + w(kk+max_A(1))   * sin(2*pi*kk/2*mod(t/p(2),1)) ...
-            + w(kk+max_A(1)+1) * cos(2*pi*kk/2*mod(t/p(2),1));
-end
-
-olw = (x' * x) \ x' * m;
-ols = ones(length(t), 1) * olw(1);
-for kk = 2:2:max_A(1)
-    ols = ols + olw(kk)   * sin(2*pi*kk/2*mod(t/p(1),1)) ...
-              + olw(kk+1) * cos(2*pi*kk/2*mod(t/p(1),1));
-end
-for kk = 2:2:max_A(2)
-    ols = ols + olw(kk+max_A(1))   * sin(2*pi*kk/2*mod(t/p(2),1)) ...
-              + olw(kk+max_A(1)+1) * cos(2*pi*kk/2*mod(t/p(2),1));
-end
-
-ymax = max([max(m), max(lm), max(ols)]) + 4*max(e);
-ymin = min([min(m), min(lm), min(ols)]) - 4*max(e);
+[lw, FitInfo] = lasso(X, m, 'CV', 3);
+lm = Xph*lw(:,FitInfo.IndexMinMSE) + FitInfo.Intercept(FitInfo.IndexMinMSE);
+lms = Xs*lw(:,FitInfo.IndexMinMSE) + FitInfo.Intercept(FitInfo.IndexMinMSE);
+%lsw = (X' * X) \ X' * m;
+%lsm = Xph*lsw;
+ymax = max([max(m), max(lm)]) + 4*max(e);%, max(lsm)]) + 4*max(e);
+ymin = min([min(m), min(lm)]) - 4*max(e);%, min(lsm)]) - 4*max(e);
 
 % Plot unphased data
 figure
+subplot(1, 2, 1)
 errorbar(t, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1);
 set(gca, 'YDir', 'reverse')
 offset = .05 * (max(t)-min(t));
@@ -532,70 +619,31 @@ set(gca, 'xlim', [min(t)-offset max(t)+offset])
 set(gca, 'ylim', [ymin ymax])
 xlabel('t')
 ylabel('m(t)')
+subplot(1, 2, 2)
+plot(ph_s, lms, 'LineWidth', 0.5, 'Color', [0 0 0])
+set(gca, 'xlim', [0, max(ph_s)]);
+set(gca, 'ylim', [ymin ymax]);
+ylabel('m(\phi)')
+xlabel(['\phi'])
 matlab2tikz([name '-photometry.tikz'], 'height', '\figureheight', ...
                                       'width', '\figurewidth');
 
-% Plot phased data
+% Fit!
 figure
 for p_i = 1:length(p)
-    subplot(1, 2, p_i)
-    ph = mod(t ./ p(p_i), num_repeats);
-    errorbar(ph, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1)
-    set(gca, 'YDir', 'reverse')
-    set(gca, 'xlim', [0 num_repeats])
-    set(gca, 'ylim', [ymin ymax])
-    ylabel('m(\phi)')
-    xlabel(['\phi (P = ' num2str(p(p_i)) 'd)'])
-end
-matlab2tikz([name '-phased.tikz'], 'height', '\figureheight', ...
-                                   'width', '\figurewidth');
-
-% Plot OLS
-figure
-for p_i = 1:length(p)
-    subplot(1, 2, p_i)
-    ph = mod(t ./ p(p_i), num_repeats);
-    errorbar(ph, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1)
+    subplot(1, length(p), p_i)
+    phased = sortrows([mod(ph ./ p(p_i), num_repeats) lm], 1);
+    plot(phased(:,1), phased(:,2), ...
+         'LineWidth', 0.5, 'Color', [0 0 0])
     set(gca, 'YDir', 'reverse')
     set(gca, 'xlim', [0 num_repeats])
     set(gca, 'ylim', [ymin ymax])
     ylabel('m(\phi)')
     xlabel(['\phi (P = ' num2str(p(p_i)) 'd)'])
     hold on
-    ph = 0:resolution:num_repeats;
-    skip = sum(max_A(1:(p_i-1)));
-    ols = ones(1, length(ph)) * olw(1);
-    for kk = 2:2:max_A(p_i)
-        ols = ols + olw(kk+skip)   * sin(2*pi*kk/2*mod(ph/p(p_i),1)) ...
-                  + olw(kk+skip+1) * cos(2*pi*kk/2*mod(ph/p(p_i),1));
-    end
-    plot(ph, ols, 'LineWidth', 0.5, 'Color', [0 0 0])
+    ph_t = mod(t ./ p(p_i), num_repeats);
+    errorbar(ph_t, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1)
     hold off
 end
 matlab2tikz([name '-ols.tikz'], 'height', '\figureheight', ...
-                            'width', '\figurewidth');
-
-% Plot lasso
-figure
-for p_i = 1:length(p)
-    subplot(1, 2, p_i)
-    ph = mod(t ./ p(p_i), num_repeats);
-    errorbar(ph, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1)
-    set(gca, 'YDir', 'reverse')
-    set(gca, 'xlim', [0 num_repeats])
-    set(gca, 'ylim', [ymin ymax])
-    ylabel('m(\phi)')
-    xlabel(['\phi (P = ' num2str(p(p_i)) 'd)'])
-    hold on
-    ph = 0:resolution:num_repeats;
-    skip = sum(max_A(1:(p_i-1)));
-    lm = ones(1, length(ph)) * FitInfo.Intercept(FitInfo.IndexMinMSE);
-    for kk = 2:2:max_A(p_i)
-        lm = lm + w(kk+skip)   * sin(2*pi*kk/2*mod(ph/p(p_i),1)) ...
-                + w(kk+skip+1) * cos(2*pi*kk/2*mod(ph/p(p_i),1));
-    end
-    plot(ph, lm, 'LineWidth', 0.5, 'Color', [0 0 0])
-    hold off
-end
-matlab2tikz([name '-lasso.tikz'], 'height', '\figureheight', ...
                             'width', '\figurewidth');
