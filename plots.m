@@ -129,9 +129,10 @@ matlab2tikz('mpo-lasso.tikz', 'height', '\figureheight', ...
 
 % Plot in Fourier space
 figure;
+subplot(2,1,1)
 plot(sin(t), cos(t), '--', 'color', [0.5 0.5 0.5], 'LineWidth', 1);
-xlabel('\sin(\omega_1t)');
-ylabel('\cos(\omega_1t)');
+xlabel('$\sin(\omega_1t)$');
+ylabel('$\cos(\omega_1t)$');
 set(gca,'xtick',[]);
 set(gca,'xticklabel',[]);
 set(gca,'ytick',[]);
@@ -139,15 +140,26 @@ set(gca,'yticklabel',[]);
 hold on;
 plot(X(:,2), X(:,3), '.', 'color', [.5 0 0]);
 hold off;
-matlab2tikz('mpo-fourier-space.tikz', 'height', '\figureheight', ...
-                                      'width', '\figurewidth');
+subplot(2,1,2)
+plot(sin(t), sin(2*t), '--', 'color', [0.5 0.5 0.5], 'LineWidth', 1);
+xlabel('$\sin(\omega_1t)$');
+ylabel('$\sin(2\omega_1t)$');
+set(gca,'xtick',[]);
+set(gca,'xticklabel',[]);
+set(gca,'ytick',[]);
+set(gca,'yticklabel',[]);
+hold on;
+plot(X(:,2), X(:,4), '.', 'color', [.5 0 0]);
+hold off;
+matlab2tikz('mpo-fourier.tikz', 'height', '\figureheight', ...
+                                'width',  '\figurewidth');
 
 % Plot 3D view
-%subplot(2, 2, 2);
 figure;
+subplot(2, 1, 1);
 plot3(sin(t), cos(t), m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 0.5);
-xlabel('\sin(\omega_1t)');
-ylabel('\cos(\omega_1t)');
+xlabel('$\sin(\omega_1t)$');
+ylabel('$\cos(\omega_1t)$');
 zlabel('m(t)');
 set(gca,'xticklabel',[]);
 set(gca,'yticklabel',[]);
@@ -156,8 +168,29 @@ hold on;
 scatter3(X(:,2), X(:,3), usm, 25, ...
          repmat([0.5,0,0],numel(usm),1), 'marker', '.');
 for ii = 1:length(usm)
-    plot3([sin(ust(ii)) sin(ust(ii))], [cos(ust(ii)) cos(ust(ii))], ...
-        [usm(ii)-err usm(ii)+err], 'color', [0.5, 0, 0]);
+    plot3([sin(ust(ii)) sin(ust(ii))], ...
+          [cos(ust(ii)) cos(ust(ii))], ...
+          [usm(ii)-err usm(ii)+err], ...
+          'color', [0.5, 0, 0]);
+end
+grid on;
+hold off;
+subplot(2, 1, 2);
+plot3(sin(t), sin(2*t), m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 0.5);
+xlabel('$\sin(\omega_1t)$');
+ylabel('$\sin(2\omega_1t)$');
+zlabel('m(t)');
+set(gca,'xticklabel',[]);
+set(gca,'yticklabel',[]);
+set(gca,'zticklabel',[]);
+hold on;
+scatter3(X(:,2), X(:,4), usm, 25, ...
+         repmat([0.5,0,0],numel(usm),1), 'marker', '.');
+for ii = 1:length(usm)
+    plot3([sin(ust(ii)) sin(ust(ii))], ...
+          [sin(2*ust(ii)) sin(2*ust(ii))], ...
+          [usm(ii)-err usm(ii)+err], ...
+          'color', [0.5, 0, 0]);
 end
 grid on;
 hold off;
@@ -201,37 +234,6 @@ set(gca, 'zlim', [-2 2]);
 grid on;
 hold off;
 %}
-subplot(2, 2, 3);
-plot(sin(t), sin(2*t), '--', 'color', [0.5 0.5 0.5], 'LineWidth', 1);
-xlabel('\sin(\omega_1t)');
-ylabel('\sin(2\omega_1t)');
-set(gca,'xtick',[]);
-set(gca,'xticklabel',[]);
-set(gca,'ytick',[]);
-set(gca,'yticklabel',[]);
-hold on;
-plot(X(:,2), X(:,4), '.', 'color', [.5 0 0]);
-hold off;
-
-subplot(2, 2, 4);
-plot3(sin(t), sin(2*t), m, '--', 'color', [0.5 0.5 0.5], 'LineWidth', 0.5);
-xlabel('\sin(\omega_1t)');
-ylabel('\sin(2\omega_1t)');
-zlabel('m(t)');
-set(gca,'xticklabel',[]);
-set(gca,'yticklabel',[]);
-set(gca,'zticklabel',[]);
-hold on;
-scatter3(X(:,2), X(:,4), usm, 15, ...
-         repmat([0.5,0,0],numel(usm),1), 'marker', '.');
-for ii = 1:length(usm)
-    plot3([sin(ust(ii)) sin(ust(ii))], [sin(2*ust(ii)) sin(2*ust(ii))], ...
-        [usm(ii)-err usm(ii)+err], 'color', [0.5, 0, 0]);
-end
-grid on;
-hold off;
-matlab2tikz('mpo-fourier.tikz', 'height', '\figureheight', ...
-                                'width',  '\figurewidth');
 
 
 
@@ -351,9 +353,9 @@ title(['P = ' num2str(p(2)) 'd'])
 
 
 
-
+%{
 %% PL
-asdf = [''];
+asdf = '';
 for ii = 1:101
     asdf = ['%f ' asdf];
 end
@@ -391,7 +393,7 @@ scatter(log10(ogle_i(:,1)), ogle_i(:,85), 23, [.5 0 0], '.')
 set(gca, 'YDir', 'reverse')
 xlabel('Log Period')
 ylabel('m(\phi = 0)')
-
+%}
 
 
 
@@ -477,9 +479,9 @@ matlab2tikz([name '-photometry.tikz'], 'height', '\figureheight', ...
 % Inputs
 name = 'OGLE-LMC-CEP-0209';
 p = 3.1227238;
-num_p1 = 32;
+num_p1 = 30;
 num_repeats = 2;
-resolution = .001;-
+phase_resolution = .001;
 
 % Parse data
 data = fscanf(fopen([name '.dat'],'r'), '%f %f %f', [3 Inf])';
@@ -495,7 +497,7 @@ for kk = 2:2:num_p1
 end
 
 % Fit OLS and Lasso
-ph = 0:resolution:num_repeats;
+ph = 0:phase_resolution:num_repeats;
 [w, FitInfo] = lasso(X, m, 'CV', 3);
 w = w(:,FitInfo.IndexMinMSE);
 lm = ones(1, length(ph)) * FitInfo.Intercept(FitInfo.IndexMinMSE);
@@ -545,7 +547,7 @@ errorbar(ph, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1)
 set(gca, 'YDir', 'reverse')
 set(gca, 'xlim', [0 num_repeats])
 hold on
-ph = 0:resolution:num_repeats;
+ph = 0:phase_resolution:num_repeats;
 plot(ph, ols, 'LineWidth', 0.5, 'Color', [0 0 0])
 hold off
 set(gca, 'ylim', [ymin ymax])
@@ -561,7 +563,7 @@ errorbar(ph, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1)
 set(gca, 'YDir', 'reverse')
 set(gca, 'xlim', [0 num_repeats])
 hold on
-ph = 0:resolution:num_repeats;
+ph = 0:phase_resolution:num_repeats;
 plot(ph, lm, 'LineWidth', 0.5, 'Color', [0 0 0])
 hold off
 set(gca, 'ylim', [ymin ymax])
@@ -582,15 +584,15 @@ name = 'OGLE-LMC-CEP-0432';
 p = [3.8842199 2.7931983];
 max_A = 10;
 num_repeats = 2;
-resolution = 1;
+phase_resolution = 1;
 
 % Parse data
 data = fscanf(fopen([name '.dat'], 'r'), '%f %f %f', [3 Inf])';
 t = data(:, 1);
 m = data(:, 2);
 e = data(:, 3);
-ph = [(min(t):resolution:max(t))'; t];
-ph_s = (0:.1:ceil(prod(p)*4))';
+ph = [(min(t):phase_resolution:max(t))'; t];
+ts = (0:.1:ceil(prod(p)*4))';
 
 % Build feature matrix
 ks = cell(1,numel(p)); 
@@ -598,12 +600,12 @@ ks = cell(1,numel(p));
 ks = reshape(cat(numel(p)+1, ks{:}), [], numel(p));
 X   = [cos(t*(ks*(2*pi./p'))') sin(t*(ks(2:length(ks),:)*(2*pi./p'))')];
 Xph = [cos(ph*(ks*(2*pi./p'))') sin(ph*(ks(2:length(ks),:)*(2*pi./p'))')];
-Xs  = [cos(ph_s*(ks*(2*pi./p'))') sin(ph_s*(ks(2:length(ks),:)*(2*pi./p'))')];
+Xts  = [cos(ts*(ks*(2*pi./p'))') sin(ts*(ks(2:length(ks),:)*(2*pi./p'))')];
 
 % Fit OLS and Lasso
 [lw, FitInfo] = lasso(X, m, 'CV', 3);
 lm = Xph*lw(:,FitInfo.IndexMinMSE) + FitInfo.Intercept(FitInfo.IndexMinMSE);
-lms = Xs*lw(:,FitInfo.IndexMinMSE) + FitInfo.Intercept(FitInfo.IndexMinMSE);
+lms = Xts*lw(:,FitInfo.IndexMinMSE) + FitInfo.Intercept(FitInfo.IndexMinMSE);
 %lsw = (X' * X) \ X' * m;
 %lsm = Xph*lsw;
 ymax = max([max(m), max(lm)]) + 4*max(e);%, max(lsm)]) + 4*max(e);
@@ -620,8 +622,8 @@ set(gca, 'ylim', [ymin ymax])
 xlabel('t')
 ylabel('m(t)')
 subplot(1, 2, 2)
-plot(ph_s, lms, 'LineWidth', 0.5, 'Color', [0 0 0])
-set(gca, 'xlim', [0, max(ph_s)]);
+plot(ts, lms, 'LineWidth', 0.5, 'Color', [0 0 0])
+set(gca, 'xlim', [0, max(ts)]);
 set(gca, 'ylim', [ymin ymax]);
 ylabel('m(\phi)')
 xlabel(['\phi'])
@@ -647,3 +649,119 @@ for p_i = 1:length(p)
 end
 matlab2tikz([name '-ols.tikz'], 'height', '\figureheight', ...
                             'width', '\figurewidth');
+
+
+
+
+
+
+
+
+%% OGLE-LMC-CEP-2147.dat
+% Inputs
+name = 'OGLE-LMC-CEP-2147';
+p = [0.5412792 0.4360429 0.3662999];
+max_A = 10;
+params.num_repeats = 2;
+params.phase_resolution = 1;
+params.ts_resolution = 0.1;
+params.windows = 4;
+params.save_plot = true;
+lightcurve(name, p, max_A, params)
+%{
+% Parse data
+data = fscanf(fopen([name '.dat'], 'r'), '%f %f %f', [3 Inf])';
+t = data(:, 1);
+m = data(:, 2);
+e = data(:, 3);
+ph = [(min(t) : phase_resolution : max(t))'; t];
+ts = (floor(min(t)) : ts_resolution : ...
+      ceil(min(t)+prod(windows*p)*windows))';
+
+% Find wavenumbers (k) and angular frequencies (omega)
+ks = cell(1,numel(p)); 
+[ks{:}] = ndgrid(0:max_A);
+ks = reshape(cat(numel(p)+1, ks{:}), [], numel(p));
+omega = (2*pi./p');
+
+% Build feature matrix (X)
+cos_freqs = (ks*omega)';
+sin_freqs = (ks(2:length(ks),:)*omega)'; % remove column of 0s
+X   = [cos(t  * cos_freqs) sin(t  * sin_freqs)];
+Xph = [cos(ph * cos_freqs) sin(ph * sin_freqs)];
+Xts = [cos(ts * cos_freqs) sin(ts * sin_freqs)];
+
+% Fit OLS and Lasso
+[lw, FitInfo] = lasso(X, m, 'CV', 3);
+lw = [FitInfo.Intercept(FitInfo.IndexMinMSE); ...
+       lw(2:length(lw), FitInfo.IndexMinMSE)];
+lm = Xph*lw;
+%lsw = (X' * X) \ X' * m;
+%lsm = Xph*lsw;
+ymax = max([max(m), max(lm)]) + 4*max(e);%, max(lsm)]) + 4*max(e);
+ymin = min([min(m), min(lm)]) - 4*max(e);%, min(lsm)]) - 4*max(e);
+
+SStot = var(m) * length(m);
+SSres = sum((X*lw - m).^2);
+r2 = 1 - SSres/SStot;
+
+% Plot unphased data
+figure
+subplot(1, 2, 1)
+errorbar(t, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1);
+offset = .05 * (max(t)-min(t));
+set(gca, 'xlim', [min(t)-offset max(t)+offset])
+set(gca, 'ylim', [ymin ymax])
+set(gca, 'YDir', 'reverse')
+xlabel('t')
+ylabel('m(t)')
+subplot(1, 2, 2)
+plot(ts, Xts*lw, 'LineWidth', 0.5, 'Color', [0 0 0])
+set(gca, 'xlim', [min(ts) max(ts)]);
+set(gca, 'ylim', [ymin ymax]);
+set(gca, 'YDir', 'reverse')
+xlabel('t')
+ylabel('m(t)')
+matlab2tikz([name '-photometry.tikz'], 'height', '\figureheight', ...
+                                      'width', '\figurewidth');
+
+% Fit!
+figure
+for p_i = 1:length(p)
+    subplot(1, length(p), p_i)
+    phased = sortrows([mod(ph ./ p(p_i), num_repeats) lm], 1);
+    plot(phased(:,1), phased(:,2), ...
+         'LineWidth', 0.5, 'Color', [0 0 0])
+    set(gca, 'YDir', 'reverse')
+    set(gca, 'xlim', [0 num_repeats])
+    set(gca, 'ylim', [ymin ymax])
+    ylabel('m(\phi)')
+    xlabel(['\phi (P = ' num2str(p(p_i)) 'd)'])
+    hold on
+    ph_t = mod(t ./ p(p_i), num_repeats);
+    errorbar(ph_t, m, e, '.', 'color', [.5 0 0], 'MarkerSize', 1)
+    hold off
+end
+matlab2tikz([name '-ols.tikz'], 'height', '\figureheight', ...
+                            'width', '\figurewidth');
+%}
+
+
+
+
+
+
+
+
+
+
+%% OGLE-LMC-CEP-2147.dat
+% Inputs
+name = 'OGLE-LMC-CEP-0432';
+p = [3.8842199 2.7931983];
+max_A = 10;
+num_repeats = 2;
+phase_resolution = 1;
+ts_resolution = 0.1;
+windows = 4;
+
