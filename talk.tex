@@ -17,17 +17,19 @@
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
 \usepackage{adjustbox}
+\usepackage{tabularx}
+
 \usepackage{tikz}
 \usepackage{pgfplots}
-\usepackage{tabularx}
 \pgfplotsset{compat=1.10}
-
+%\usepgfplotslibrary{external} 
+%\tikzexternalize
 \newlength\figureheight
 \newlength\figurewidth
 \setlength\figureheight{0.65\textheight}
 \setlength\figurewidth{\textwidth}
 
-\title[Optimal Light Curve Modeling of Cepheid-Like Variables]{Optimal Light Curve Modeling of \\Cepheid-Like Variables}
+\title[Optimal Light Curve Modeling of Intrinsic Periodic Variables]{Optimal Light Curve Modeling of \\Intrinsic Periodic Variable Stars}
 \author{Earl Bellinger}
 \institute{} 
 \date{\today}
@@ -57,34 +59,61 @@
 %  \tableofcontents
 %\end{frame}
 
-\section{Intrinsic Variables as Multiperiodic Oscillators}
+\section{Classical Light Curve Modeling}
 \subsection{Motivation}
 \begin{frame}{The Cepheid Period-Luminosity Relation}
-\begin{center}
-asdf
-\end{center}
+\begin{enumerate}
+\item Asteroseismology 
+\item Stellar Evolution 
+\item Cosmology 
+\end{enumerate}
 \end{frame}
 
-\subsection{Trigonometric View of Multiperiodic Oscillation}
-\begin{frame}{Trigonometric View of Multiperiodic Oscillation}
+\subsection{Fourier Analysis}
+\begin{frame}{Fourier Analysis}
 Let 
 \begin{center}
+\only<1>{
 \begin{tabular}{c c r}
 \textbf{Variable} & \textbf{Type} & \textbf{Meaning} \\ \hline \hline
 $\boldsymbol \omega$ & vector & angular frequencies \\
-$\mathbf A$ & matrix & sine amplitudes \\ 
-$\boldsymbol \Phi$ & matrix & phases \\
-$j$ & index & $j$th angular frequency \\
-$k$ & index & $k$th wavelength \\ \hline
-\end{tabular}
+$\mathbf k$ & vector & wavenumbers \\
+$\mathbf A$ & tensor & amplitudes \\ 
+$\boldsymbol \Phi$ & tensor & phases \\ \hline
+\end{tabular}}
+\only<2>{
+\begin{tabular}{c c r}
+\textbf{Variable} & \textbf{Type} & \textbf{Meaning} \\ \hline \hline
+$\boldsymbol \omega$ & vector & angular frequencies \\
+$\mathbf k$ & vector & wavenumbers \\
+$\mathbf S$ & tensor & sine amplitudes \\ 
+$\mathbf C$ & tensor & cosine amplitudes \\ \hline
+\end{tabular}}
 \end{center}
 The magnitude $m$ at time $t$ is then
-$$m(t | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) =
-    \sum_j^{|\boldsymbol \omega|} \sum_k^{|\mathbf{A_j}|}
-      A_{jk } \sin \left( k \omega_j t + \Phi_{jk} \right) $$
+\only<1>{
+$$m(t | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) = 
+  \sum_{(k_1, \dots, k_{|\boldsymbol \omega|})}
+    A_{\mathbf{k}} 
+    \sin \left( 
+      \mathbf{k} \boldsymbol \omega t + \Phi_{\mathbf{k}}
+    \right)$$}
+\only<2>{
+$$m(t | \boldsymbol \omega, \mathbf S, \mathbf C) = 
+  \sum_{(k_1, \dots, k_{|\boldsymbol \omega|})}
+    S_{\mathbf{k}} 
+    \sin \left( 
+      \mathbf{k} \boldsymbol \omega t
+    \right)
+  + C_{\mathbf{k}} 
+    \cos \left( 
+      \mathbf{k} \boldsymbol \omega t
+    \right)$$}
+\onslide<2>{
+$$\text{with } S_{\mathbf{k}} = A_{\mathbf{k}}\cos(\Phi_{\mathbf{k}})
+  \text{ and } C_{\mathbf{k}} = A_{\mathbf{k}}\sin(\Phi_{\mathbf{k}})$$}
 \end{frame}
 
-%\subsection{Synthetic Data}
 \begin{frame}{Example of a Multiperiodic Oscillator}
 \begin{figure}
 \centering
@@ -99,78 +128,62 @@ $$m(t | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) =
 \end{figure} 
 \end{frame}
 
-\begin{frame}{Projection into Fourier Space}
-\begin{figure}
-\centering
-\input{mpo-fourier.tikz}
-\end{figure} 
-\end{frame}
-
-%\begin{frame}{Classical Stellar Modelling}
-%\begin{itemize}
-%\item Discover angular frequencies $\boldsymbol \omega$ using a periodogram method such as the CLEANest algorithm (Foster 1995)
-%\item Linearize the model unknowns with 
+\subsection{Classical Light Curve Modeling}
+%\begin{frame}{Linear Transformation}
+%\begin{block}{Trigonometric Identity: Sine of Sum}
+%Recall that 
 %\begin{align*} A \sin(x + \Phi)
 %  &= A \cos(\Phi) \sin(x) + A \sin(\Phi) \cos(x)
 %\\&= S \sin(x) + C \cos(x) \end{align*}
-%\item Build a linear coefficient matrix and solve with linear least squares 
-%\begin{align*}
-%\hat{\mathbf{w}} &= \underset{\mathbf{w}}{\arg\min}\, \sum_{i=1}^{N} \Big| m_i - \sum_{j=1}^{2n+1} X_{ij} w_j \Big|^2 
-%\\ &= \underset{\mathbf{w}}{\arg\min}\, \bigl\|\mathbf m - \textsf{\textbf X} \mathbf w \bigr\|^2
-%\\ &= (\textsf{\textbf{X}}^\text{T} \textsf{\textbf{X}})^{-1} %\textsf{\textbf{X}}^\text{T} \mathbf{m}
-%\end{align*}
-%\end{itemize}
+%with $S = A\cos(\Phi)$ and $C = A\sin(\Phi)$.
+%\end{block}
+%So we may move toward linear parameters like so:
+%$$m(t | \boldsymbol \omega, \mathbf S, \mathbf C) =
+%    \sum_{(k_1, \dots, k_{|\boldsymbol \omega|})}
+%      S_{\mathbf{k}} \sin \left( \mathbf{k} \boldsymbol{\omega} t \right) + %C_{\mathbf{k}} \cos \left( \mathbf{k} \boldsymbol{\omega} t \right) $$
 %\end{frame}
 
-%\begin{frame}{Linearization of the Objectives}
-%Now that $\boldsymbol \omega$ is a constant, we can leverage the fact that
-%\begin{align*} A \sin(x + \Phi)
-%  &= A \cos(\Phi) \sin(x) + A \sin(\Phi) \cos(x)
-%\\&= B \sin(x) + C \cos(x) \end{align*}
-%to linearize our objective function like so:
-%\begin{align*}
-%(\boldsymbol{\hat \omega}, \mathbf {\hat B}, \mathbf{\hat C}) =
-%  \underset{(\boldsymbol \omega, \mathbf a, \mathbf b)}{\arg\min}
-%    & \sum_i \left(m_i - \sum_{jk} B_{jk } \sin \left(k \omega_j t_i \right)
-%                                 + C_{jk } \cos \left(k \omega_j t_i \right) 
-%             \right)^2
-%  \\&+ \lambda \sum_{jk} |B_{jk}| + |C_{jk}| 
-%\end{align*}
-%\end{frame}
+\begin{frame}{Projection into Fourier Space}
+\makebox[\textwidth][c]{\input{mpo-fourier.tikz}}
+\end{frame}
 
-\subsection{Classical Light Curve Modeling}
-\begin{frame}{Classical Light Curve Modeling}%Building the Linear Equation Coefficient Matrix}
+\begin{frame}{Scaled by Observed Magnitudes}
+\makebox[\textwidth][c]{\input{mpo-fourier-scaled.tikz}}
+\end{frame}
+
+\begin{frame}{Least-Squares Trigonometric Regression}%Building the Linear Equation Coefficient Matrix}
 \begin{center}
 \begin{tabular}{lcr}
 \textbf{Variable} & \textbf{Size} & \textbf{Meaning} \\ \hline\hline
-$\mathbf t$ & $n$ & times \\
+$k$ & 1 & maximum wavenumber \\
+$\mathbf{t}, \mathbf{m}$ & $n$ & times and magnitudes \\
 $\boldsymbol \omega$ & $p$ & angular frequencies \\
-$\mathbf S$, $\mathbf C$ & ${p\times q}$ & sine/cosine amplitudes \\ 
-$\mathbf X$ & ${n \times (2pq+1)}$ & coefficient matrix \\ \hline
+%$\mathbf S$, $\mathbf C$ & ${k^p\times k}$ & sine/cosine amplitudes \\ 
+$\mathbf X$ & ${n \times (2k^p+1)}$ & coefficient matrix \\ \hline
 \end{tabular}
 \end{center}
 %Now we can build a feature matrix of size ${n \times (2pq+1)}$ with 
-Find $\boldsymbol \omega$ via periodogram, then solve $(\textsf{\textbf{X}}^\text{T} \textsf{\textbf{X}})^{-1} \textsf{\textbf{X}}^\text{T} \mathbf{m}$ with $\textbf{X} = $ \setlength{\arraycolsep}{4pt} $$ 
+Find $\boldsymbol \omega$ via periodogram, then compute $(\textsf{\textbf{X}}^\text{T} \textsf{\textbf{X}})^{-1} \textsf{\textbf{X}}^\text{T} \mathbf{m}$ with $\textbf{X} = $ \setlength{\arraycolsep}{4pt} $$ 
 \hspace*{-3mm} \begin{bmatrix}
-1 & \sin(\omega_1 t_1)
-  & \cos(\omega_1 t_1) & \cdots
-  & \cos(q \omega_1 t_1)
-  & \sin(\omega_2 t_1) & \cdots
-  & \cos(q \omega_p t_1) \\[2.2ex]
+1 & \sin(t_1 \omega_1
+  & \cos(t_1 \omega_1)
+  & \sin(t_1 [\omega_1 + \omega_2]) & \cdots
+  & \cos(t_1 \sum_j^{p} k\omega_j) \\[1.5ex]
 
-1 & \sin(\omega_1 t_2)
-  & \cos(\omega_1 t_2) & \cdots
-  & \cos(q \omega_1 t_2)
-  & \sin(\omega_2 t_2) & \cdots
-  & \cos(q \omega_p t_2) \\[2.2ex]
+1 & \sin(t_2 \omega_1)
+  & \cos(t_2 \omega_1) 
+  & \sin(t_2 [\omega_1 + \omega_2]) & \cdots
+  & \cos(t_2 \sum_j^p k\omega_j) \\[1.5ex]
 
-\vdots & \vdots & \vdots & \ddots & \vdots & \vdots & \ddots & \vdots \\[2.2ex]
+\vdots & \vdots 
+       & \vdots 
+       & \vdots & \ddots 
+       & \vdots \\[1.5ex]
 
-1 & \sin(\omega_1 t_n)
-  & \cos(\omega_1 t_n) & \cdots
-  & \cos(q \omega_1 t_n)
-  & \sin(\omega_2 t_n) & \cdots
-  & \cos(q \omega_p t_n) %\\[2.2ex]
+1 & \sin(t_n \omega_1)
+  & \cos(t_n \omega_1) 
+  & \sin(t_n [\omega_1 + \omega_2]) & \cdots
+  & \cos(t_n \sum_j^p k\omega_j)
 \end{bmatrix} $$
 \end{frame}
 
@@ -206,8 +219,8 @@ $$|m_i - \hat m(t_i | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\h
 \end{itemize}
 \end{frame}
 
-\section{An Optimization View of Photometric Stellar Modelling}
-\begin{frame}{An Optimization View of Photometric Stellar Modelling}
+\section{An Optimization View of Photometric Modeling}
+\begin{frame}{An Optimization View of Photometric Modeling}
 \vspace{-3mm}
 \begin{align*}
 &&(\boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi}) =
@@ -221,23 +234,12 @@ $$|m_i - \hat m(t_i | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\h
     \; \text{for all } i=1\ldots |\mathbf{m}|
 \\ &&\text{where } &
   \hat m(t | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) =
-    \sum_j^{|\boldsymbol \omega|} \sum_k^{|\mathbf{A_j}|}
-      A_{jk } \sin \left( k \omega_j t + \Phi_{jk} \right) 
+    \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})}^{|\mathbf{A}|}
+      A_{\mathbf{k}} \sin \left( \mathbf{k} \boldsymbol{\omega} t + \Phi_{\mathbf{k}} \right) 
 \end{align*}
-\only<1-1>{
-  \begin{center}
-    \begin{tabular}{c|c|c|c|c}
-      \textbf{Variable} & \textbf{Type} & \textbf{Index} & \textbf{Meaning} & \textbf{Given?} \\ \hline\hline
-      $\mathbf{t}$ & Vector & $i$ & Times of Observation & $\checkmark$ \\
-      $\mathbf{m}$ & Vector & $i$ & Observed Magnitudes & $\checkmark$ \\
-      $\boldsymbol \epsilon$ & Vector & $i$ & Observation Errors & $\checkmark$ \\
-      $\boldsymbol \omega$ & Vector & $j$ & Angular Frequencies & $\times$ \\
-      $\mathbf A$ & Matrix & $j,k$ & Amplitudes & $\times$ \\
-      $\boldsymbol \Phi$ & Matrix & $j,k$ & Phases & $\times$ %\\$F$ & Function & Fourier fit 
-    \end{tabular}
-  \end{center}
-}
-\only<2-2>{
+%\begin{overprint}
+\begin{center}
+\alt<2>{
   \begin{block}{\textbf{Properties of the Optimization}}
     \begin{tabular}{r c p{6.5cm}}
       \textbf{Multiobjective} &$\rightarrow$& Many criteria to optimize simultaneously\\
@@ -245,7 +247,19 @@ $$|m_i - \hat m(t_i | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\h
       \textbf{Nonlinear} &$\rightarrow$& Constraints and objectives not directly proportional to inputs
     \end{tabular}
   \end{block}
+}{
+\begin{tabular}{c|c|c|c|c}
+      \textbf{Variable} & \textbf{Type} & \textbf{Index} & \textbf{Meaning} & \textbf{Given?} \\ \hline\hline
+      $\mathbf{t}$ & Vector & $i$ & Times of Observation & $\checkmark$ \\
+      $\mathbf{m}$ & Vector & $i$ & Observed Magnitudes & $\checkmark$ \\
+      $\boldsymbol \epsilon$ & Vector & $i$ & Observation Errors & $\checkmark$ \\
+      $\boldsymbol \omega$ & Vector & $j$ & Angular Frequencies & $\times$ \\
+      $\mathbf A$ & Tensor & $\mathbf{k}$ & Amplitudes & $\times$ \\
+      $\boldsymbol \Phi$ & Tensor & $\mathbf{k}$ & Phases & $\times$ 
+    \end{tabular}
 }
+\end{center}
+%\end{overprint}
 \end{frame}
 
 
@@ -266,10 +280,11 @@ $$|m_i - \hat m(t_i | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\h
 We can apply the Least Absolute Shrinkage and Selection Operator (LASSO) to scalarize our objectives:
 \begin{align*}(\boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})
   = \underset{(\boldsymbol \omega, \mathbf A, \boldsymbol \Phi)}{\arg\min}
-  & \sum_i \left(m_i - \sum_{jk} A_{jk } \sin \left(k \omega_j t_i + \Phi_{jk} \right) \right)^2
-\\&+ \lambda \sum_{jk} |A_{jk}|
+  & \sum_i \left(m_i - \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})} A_{\mathbf{k}} \sin \left(\mathbf{k} \boldsymbol{\omega} t_i + \Phi_{\mathbf{k}} \right) \right)^2
+\\&+ \lambda \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})} |A_{\mathbf{k}}|
 \end{align*}
 where the shrinkage parameter $\lambda$ can be chosen e.g.~via cross-validation. 
+\vspace{3mm}
 \begin{thebibliography}{1}
   \beamertemplatearticlebibitems
   \bibitem{lasso}
@@ -281,14 +296,14 @@ where the shrinkage parameter $\lambda$ can be chosen e.g.~via cross-validation.
 
 \subsection{Solving the Approximate Optimization Problem}
 \begin{frame}{Solving the Approximate Optimization Problem}
-\begin{block}{The Lasso Solution}
-We can now use the linear coefficient matrix $\mathbf X$ from before to solve
+\begin{block}{The LASSO Solution}
+We can now use the coefficient matrix $\mathbf X$ from before to solve
 $$\mathbf{\hat w} = \underset{\mathbf w}{\arg\min} \; \| \mathbf {m} - \mathbf {X} \mathbf {w} \|_2 + \lambda \| \mathbf{w} \|_1$$
 using e.g.~coordinate descent (Wu, Tong, and Lange, 2008).
 \end{block}
 \vspace{5mm}
-The entries of $\mathbf{\hat S}$ and $\mathbf{\hat C}$ can be found in successive columns of $\mathbf{\hat{w}}$, and finally $\mathbf{\hat A}$ and $\boldsymbol{\hat{\Phi}}$ can be restored using trigonometry with
-$$A_{jk} = \sqrt{S_{jk}^2 + C_{jk}^2} \; \text{ and } \; \Phi_{jk} = \tan^{-1} (C_{jk} / S_{jk}).$$
+The entries of $\mathbf{\hat S}$ and $\mathbf{\hat C}$ can be found in successive columns of $\mathbf{\hat{w}}$, and finally $\mathbf{\hat A}$ and $\boldsymbol{\hat{\Phi}}$ can be restored using with
+$$A_{\mathbf{k}} = \sqrt{S_{\mathbf{k}}^2 + C_{\mathbf{k}}^2} \; \text{ and } \; \Phi_{\mathbf{k}} = \tan^{-1} \left(\frac{C_{\mathbf{k}}}{S_{\mathbf{k}}}\right).$$
 \end{frame}
 
 \begin{frame}{Least Squares Fit}
@@ -298,7 +313,7 @@ $$A_{jk} = \sqrt{S_{jk}^2 + C_{jk}^2} \; \text{ and } \; \Phi_{jk} = \tan^{-1} (
 \end{figure} 
 \end{frame}
 
-\begin{frame}{Lasso Fit}
+\begin{frame}{LASSO Fit}
 \begin{figure}
 \centering
 \input{mpo-lasso.tikz}
@@ -306,31 +321,20 @@ $$A_{jk} = \sqrt{S_{jk}^2 + C_{jk}^2} \; \text{ and } \; \Phi_{jk} = \tan^{-1} (
 \end{frame}
 
 \subsection{To the Stars!}
-\begin{frame}{OGLE-LMC-CEP-0209 Photometry}
-\begin{figure}
-\input{OGLE-LMC-CEP-0209-photometry.tikz}
-\end{figure} 
-\end{frame}
 
-\begin{frame}{Phased with $P_1$}
-\begin{figure}
-\input{OGLE-LMC-CEP-0209-phased.tikz}
-\end{figure} 
+\begin{frame}{Phase Plot of OGLE-LMC-CEP-0209}
+\makebox[\textwidth][c]{\input{OGLE-LMC-CEP-0209-phased.tikz}}
 \end{frame}
 
 \begin{frame}{Least Squares Fit}
-\begin{figure}
-\input{OGLE-LMC-CEP-0209-ols.tikz}
-\end{figure} 
+\makebox[\textwidth][c]{\input{OGLE-LMC-CEP-0209-ols.tikz}}
 \end{frame}
 
 \begin{frame}{LASSO}
-\begin{figure}
-\input{OGLE-LMC-CEP-0209-lasso.tikz}
-\end{figure} 
+\makebox[\textwidth][c]{\input{OGLE-LMC-CEP-0209-lasso.tikz}}
 \end{frame}
 
-\begin{frame}{Lasso vs.~Baart on the OGLE Catalog}
+\begin{frame}{Lasso vs.~Baart on the OGLE-III Catalog}
 %\begin{table*}
   \begin{center}
   %\scalebox{0.63}{
@@ -363,6 +367,30 @@ BLG&RRLYR&16744&0.9583 &0.9533 &$p< 0.001$\\ \hline
   \end{center}
 %\end{table*}
 \end{frame}
+
+\begin{frame}{OGLE-BLG-RRLYR-00319 (mode RRd)}
+\makebox[\textwidth][c]{\input{OGLE-BLG-RRLYR-00319-phased-ts.tikz}}
+\end{frame}
+
+\begin{frame}{OGLE-LMC-CEP-2147 (mode 1O/2O/3O)}
+\makebox[\textwidth][c]{\input{OGLE-LMC-CEP-2147-phased-ts.tikz}}
+\end{frame}
+
+%\begin{frame}{OGLE-LMC-CEP-2147 (mode 1O/2O/3O)}
+%\makebox[\textwidth][c]{\input{OGLE-LMC-CEP-2147-phased-ts.tikz}}
+%\end{frame}
+
+%\begin{frame}{OGLE-LMC-CEP-0432 (mode F/1O)}
+%\begin{figure}
+%\input{OGLE-LMC-CEP-0432-photometry.tikz}
+%\end{figure} 
+%\end{frame}
+
+%\begin{frame}{OGLE-LMC-CEP-2147}
+%\begin{figure}
+%\input{OGLE-LMC-CEP-2147-phased.tikz}
+%\end{figure} 
+%\end{frame}
 
 %\begin{frame}{Leavitt's Law in the SMC and LMC}
 %\begin{figure}
