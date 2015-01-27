@@ -37,12 +37,11 @@ m = data(:, 2);
 e = data(:, 3);
 %ph = [(min(t) : phase_resolution : max(t))'; t];
 
+% Find a nice place to plot the entire light curve
 epochs = find(diff(t(t>2300)) > median(diff(t)) + mad(diff(t)));
 epochs = epochs(epochs > length(t)*.05);
 min_ts = floor(min(t));
-max_ts = ceil(t(min(epochs(1),50)));%min(t)+prod(windows*p)*windows);
-min_ts = 2240;
-max_ts = 2260;
+max_ts = ceil(t(min(epochs(1),50)));
 points_i = t > min_ts & t < max_ts;
 ts = sort([(min_ts : ts_resolution : max_ts)'; t(points_i)]);
 
@@ -56,8 +55,8 @@ omega = (2*pi./p');
 cos_freqs = (ks*omega)';
 sin_freqs = (ks(2:length(ks),:)*omega)'; % remove column of 0s
 X   = [cos(t  * cos_freqs) sin(t  * sin_freqs)];
-%Xph = [cos(ph * cos_freqs) sin(ph * sin_freqs)];
 Xts = [cos(ts * cos_freqs) sin(ts * sin_freqs)];
+%Xph = [cos(ph * cos_freqs) sin(ph * sin_freqs)];
 
 % Fit OLS and Lasso
 [lw, FitInfo] = lasso(X, m, 'CV', 3);
