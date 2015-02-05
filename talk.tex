@@ -1,4 +1,7 @@
-\documentclass{beamer}
+%\documentclass{beamer}
+\documentclass[serif,mathserif,professionalfont]{beamer}
+\usepackage{pxfonts}
+\usepackage{eulervm}
 %
 % Choose how your presentation looks.
 %
@@ -7,9 +10,9 @@
 %
 \mode<presentation>
 {
-  \usetheme{Warsaw}%Madrid}      % or try Darmstadt, Madrid, Warsaw, ...
-  \usecolortheme{beaver}%seahorse % or try albatross, beaver, crane, ...
-  \usefonttheme{default}  % or try serif, structurebold, ...
+  \usetheme{CambridgeUS}%Madrid}      % or try Darmstadt, Madrid, Warsaw, ...
+  \usecolortheme{beaver}%orchid}%beaver}%seahorse % or try albatross, beaver, crane, ...
+  %\usefonttheme{structurebold}  % or try serif, structurebold, ...
   \setbeamertemplate{navigation symbols}{}
   \setbeamertemplate{caption}[numbered]
 } 
@@ -18,6 +21,7 @@
 \usepackage[utf8x]{inputenc}
 \usepackage{adjustbox}
 \usepackage{tabularx}
+\usepackage{hyperref}
 
 \usepackage{tikz}
 \usepackage{pgfplots}
@@ -29,10 +33,26 @@
 \setlength\figureheight{0.65\textheight}
 \setlength\figurewidth{\textwidth}
 
-\title[Optimal Light Curve Modeling of Intrinsic Periodic Variables]{Optimal Light Curve Modeling of \\Intrinsic Periodic Variable Stars}
+\usepackage{verbatim}
+\newif\ifshowtikz
+\showtikztrue
+%\showtikzfalse   % <---- comment/uncomment that line
+\let\oldtikzpicture\tikzpicture
+\let\oldendtikzpicture\endtikzpicture
+\renewenvironment{tikzpicture}{%
+    \ifshowtikz\expandafter\oldtikzpicture%
+    \else\comment%   
+    \fi
+}{%
+    \ifshowtikz\oldendtikzpicture%
+    \else\endcomment%
+    \fi
+}
+
+\title[Light Curve Modeling of Periodic Variables]{Optimal Light Curve Discovery of \\Intrinsic Periodic Variable Stars}
 \author{Earl Bellinger}
 \institute{} 
-\date{\today}
+\date{February 6, 2015}
 
 \begin{document}
 %\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
@@ -40,18 +60,85 @@
 %\frame{\maketitle}
 \begin{frame}
   \titlepage
-  \begin{center}
-  %\begin{tabular}{ | C{2.6cm} | C{1.3cm} | C{1.3cm} | C{2.6cm} |} \hline
-  \begin{tabular}{>{\centering\arraybackslash}p{2.6cm} 
-                   >{\centering\arraybackslash}p{1.5cm} 
-                   >{\centering\arraybackslash}p{1.5cm} 
-                   >{\centering\arraybackslash}p{2.6cm}} 
-    \includegraphics[height=1.8cm,keepaspectratio]{oswego.jpg} &
-    \includegraphics[height=1.8cm,keepaspectratio]{iu.png} &
-    \includegraphics[height=1.8cm,keepaspectratio]{iucaa.jpg} &
-    \raisebox{.05\height}{\includegraphics[width=2.58cm,height=1.5cm]{nist.png}} 
-\end{tabular}
+%  \begin{center}
+%  %\begin{tabular}{ | C{2.6cm} | C{1.3cm} | C{1.3cm} | C{2.6cm} |} \hline
+%  \begin{tabular}{>{\centering\arraybackslash}p{2.6cm} 
+%                   >{\centering\arraybackslash}p{1.5cm} 
+%                   >{\centering\arraybackslash}p{1.5cm} 
+%                   >{\centering\arraybackslash}p{2.6cm}} 
+%    \includegraphics[height=1.8cm,keepaspectratio]{oswego.jpg} &
+%    \includegraphics[height=1.8cm,keepaspectratio]{iu.png} &
+%    \includegraphics[height=1.8cm,keepaspectratio]{iucaa.jpg} &
+%    \raisebox{.05\height}{\includegraphics[width=2.58cm,height=1.5cm]{nist.png}} 
+%\end{tabular}
+%\end{center}
+\end{frame}
+
+\begin{frame}{Curriculum vitae}
+\begin{columns}[c]
+%\column{.5\textwidth}
+\column{\dimexpr\paperwidth-.45\textwidth}
+\setbeamercovered{transparent}
+\begin{itemize}
+\item<1,2> Laborat\'{o}rio Nacional de Astrof\'{i}sica \\ 
+\emph{Itajub\'{a}, Minas Gerais, Brasil}
+
+\item<1,3> Universidade Federal de Alagoas \\
+\emph{Macei\'{o}, Alagoas, Brasil}
+
+\item<1,4> NASA Jet Propulsion Laboratory \\
+\emph{Pasadena, California, USA} 
+
+\item<1,5> National Center of Sciences \\
+\emph{Chiyoda-ku, Tokyo, Japan}
+
+\item<1,6> NIST Information Technology Lab \\
+%\item National Institute of Standards \& Technology \\
+\emph{Gaithersburg, Maryland, USA} 
+
+\item<1,7> Indiana University \\
+\emph{Bloomington, Indiana, USA}
+\end{itemize}
+\column{.6\textwidth}
+\begin{overlayarea}{0.65\textwidth}{0.7\textheight}
+\only<2>{\begin{minipage}[c][0.7\textheight][c]{\linewidth}
+\includegraphics[width=\textwidth,keepaspectratio]{lna.png}
+\end{minipage}}
+\only<3>{\begin{minipage}[c][0.7\textheight][c]{\linewidth}
+\includegraphics[width=\textwidth,keepaspectratio]{ufal.png}
+\end{minipage}}
+\only<4>{\begin{minipage}[c][0.7\textheight][c]{\linewidth}
+\includegraphics[width=\textwidth,keepaspectratio]{cassini.jpg}\\
+\includegraphics[width=\textwidth,keepaspectratio]{cassini2.jpg}
+\end{minipage}}
+\only<6>{\begin{minipage}[c][0.7\textheight][c]{\linewidth}
+\includegraphics[width=\textwidth,keepaspectratio]{h_peak-vs-c0-vs-alpha.png}
+\end{minipage}}
+\only<5>{\begin{minipage}[c][0.7\textheight][c]{\linewidth}
+\begin{center}
+\includegraphics[width=.6\textwidth,keepaspectratio]{automata2.png}\\\vspace{2mm}
+\includegraphics[width=.6\textwidth,keepaspectratio]{automata1.png}
 \end{center}
+\end{minipage}}
+\only<7>{
+\begin{minipage}[c][0.7\textheight][c]{\linewidth}
+\begin{center}
+\includegraphics[width=\textwidth,keepaspectratio]{corrcoef.pdf}\\
+\resizebox{\textwidth}{!}{
+  \begin{minipage}{\textwidth}
+\begin{align*}
+\hat Q = 
+\underset{\vec Q}{\arg\max} \prod_j \Bigg[ & 
+    \left(1-\beta_j\right) \prod_i \left(1-d_{ij}\right)^{Q_i/q_0} \\
+& + \beta_j P \left( \log \frac{A_j}{\sum_i r_{ij} Q_i} \right) \Bigg]
+\end{align*}
+\end{minipage}
+}
+\end{center}
+\end{minipage}
+}
+\end{overlayarea}
+\end{columns}
 \end{frame}
 
 % Uncomment these lines for an automatically generated outline.
@@ -60,58 +147,67 @@
 %\end{frame}
 
 \section{Classical Light Curve Modeling}
+%\subsection{Motivation}
+%\begin{frame}{The Cepheid Period-Luminosity Relation}
+%\begin{enumerate}
+%\item Asteroseismology 
+%\item Stellar Evolution 
+%\item Cosmology 
+%\end{enumerate}
+%\end{frame}
+
 \subsection{Motivation}
-\begin{frame}{The Cepheid Period-Luminosity Relation}
-\begin{enumerate}
-\item Asteroseismology 
-\item Stellar Evolution 
-\item Cosmology 
-\end{enumerate}
+\begin{frame}{Cepheid Variables}
+\includegraphics[width=\textwidth,keepaspectratio]{cepheid-variables.jpg}
 \end{frame}
 
 \subsection{Fourier Analysis}
-\begin{frame}{Fourier Analysis}
+\begin{frame}{Fourier Analysis of Multiperiodic Oscillators}
 Let 
 \begin{center}
-\only<1>{
+%\only<1>{
 \begin{tabular}{c c r}
 \textbf{Variable} & \textbf{Type} & \textbf{Meaning} \\ \hline \hline
 $\boldsymbol \omega$ & vector & angular frequencies \\
 $\mathbf k$ & vector & wavenumbers \\
-$\mathbf A$ & tensor & amplitudes \\ 
-$\boldsymbol \Phi$ & tensor & phases \\ \hline
-\end{tabular}}
-\only<2>{
-\begin{tabular}{c c r}
-\textbf{Variable} & \textbf{Type} & \textbf{Meaning} \\ \hline \hline
-$\boldsymbol \omega$ & vector & angular frequencies \\
-$\mathbf k$ & vector & wavenumbers \\
-$\mathbf S$ & tensor & sine amplitudes \\ 
-$\mathbf C$ & tensor & cosine amplitudes \\ \hline
-\end{tabular}}
+$\mathbf A$ & multidimensional array & amplitudes \\ 
+$\boldsymbol \Phi$ & multidimensional array & phases \\ \hline
+\end{tabular}
+%}
+%\only<2>{
+%\begin{tabular}{c c r}
+%\textbf{Variable} & \textbf{Type} & \textbf{Meaning} \\ \hline \hline
+%$\boldsymbol \omega$ & vector & angular frequencies \\
+%$\mathbf k$ & vector & wavenumbers \\
+%$\mathbf S$ & tensor & sine amplitudes \\ 
+%$\mathbf C$ & tensor & cosine amplitudes \\ \hline
+%\end{tabular}}
 \end{center}
 The magnitude $m$ at time $t$ is then
-\only<1>{
-$$m(t | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) = 
+%\only<1>{
+$$m(t ; \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) = 
   \sum_{(k_1, \dots, k_{|\boldsymbol \omega|})}
     A_{\mathbf{k}} 
     \sin \left( 
       \mathbf{k} \boldsymbol \omega t + \Phi_{\mathbf{k}}
-    \right)$$}
-\only<2>{
-$$m(t | \boldsymbol \omega, \mathbf S, \mathbf C) = 
-  \sum_{(k_1, \dots, k_{|\boldsymbol \omega|})}
-    S_{\mathbf{k}} 
-    \sin \left( 
-      \mathbf{k} \boldsymbol \omega t
-    \right)
-  + C_{\mathbf{k}} 
-    \cos \left( 
-      \mathbf{k} \boldsymbol \omega t
-    \right)$$}
-\onslide<2>{
-$$\text{with } S_{\mathbf{k}} = A_{\mathbf{k}}\cos(\Phi_{\mathbf{k}})
-  \text{ and } C_{\mathbf{k}} = A_{\mathbf{k}}\sin(\Phi_{\mathbf{k}})$$}
+    \right)$$
+%}
+%\only<2>{
+%$$m(t | \boldsymbol \omega, \mathbf S, \mathbf C) = 
+%  \sum_{(k_1, \dots, k_{|\boldsymbol \omega|})}
+%    S_{\mathbf{k}} 
+%    \sin \left( 
+%      \mathbf{k} \boldsymbol \omega t
+%    \right)
+%  + C_{\mathbf{k}} 
+%    \cos \left( 
+%      \mathbf{k} \boldsymbol \omega t
+%    \right)$$}
+%\onslide<2>{
+%\begin{align*}
+%\text{with } S_{\mathbf{k}} &= A_{\mathbf{k}}\cos (\Phi_{\mathbf{k}})\\
+%\text{ and } C_{\mathbf{k}} &= A_{\mathbf{k}}\sin (\Phi_{\mathbf{k}})
+%\end{align*}}
 \end{frame}
 
 \begin{frame}{Example of a Multiperiodic Oscillator}
@@ -128,7 +224,6 @@ $$\text{with } S_{\mathbf{k}} = A_{\mathbf{k}}\cos(\Phi_{\mathbf{k}})
 \end{figure} 
 \end{frame}
 
-\subsection{Classical Light Curve Modeling}
 %\begin{frame}{Linear Transformation}
 %\begin{block}{Trigonometric Identity: Sine of Sum}
 %Recall that 
@@ -147,10 +242,11 @@ $$\text{with } S_{\mathbf{k}} = A_{\mathbf{k}}\cos(\Phi_{\mathbf{k}})
 \makebox[\textwidth][c]{\input{mpo-fourier.tikz}}
 \end{frame}
 
-\begin{frame}{Scaled by Observed Magnitudes}
+\begin{frame}{Fourier Components Scaled by Observed Magnitudes}
 \makebox[\textwidth][c]{\input{mpo-fourier-scaled.tikz}}
 \end{frame}
 
+\subsection{Classical Light Curve Modeling}
 \begin{frame}{Least-Squares Trigonometric Regression}%Building the Linear Equation Coefficient Matrix}
 \begin{center}
 \begin{tabular}{lcr}
@@ -162,10 +258,11 @@ $\boldsymbol \omega$ & $p$ & angular frequencies \\
 $\mathbf X$ & ${n \times (2k^p+1)}$ & coefficient matrix \\ \hline
 \end{tabular}
 \end{center}
+\begin{center}
 %Now we can build a feature matrix of size ${n \times (2pq+1)}$ with 
 Find $\boldsymbol \omega$ via periodogram, then compute $(\textsf{\textbf{X}}^\text{T} \textsf{\textbf{X}})^{-1} \textsf{\textbf{X}}^\text{T} \mathbf{m}$ with $\textbf{X} = $ \setlength{\arraycolsep}{4pt} $$ 
 \hspace*{-3mm} \begin{bmatrix}
-1 & \sin(t_1 \omega_1
+1 & \sin(t_1 \omega_1)
   & \cos(t_1 \omega_1)
   & \sin(t_1 [\omega_1 + \omega_2]) & \cdots
   & \cos(t_1 \sum_j^{p} k\omega_j) \\[1.5ex]
@@ -185,6 +282,7 @@ Find $\boldsymbol \omega$ via periodogram, then compute $(\textsf{\textbf{X}}^\t
   & \sin(t_n [\omega_1 + \omega_2]) & \cdots
   & \cos(t_n \sum_j^p k\omega_j)
 \end{bmatrix} $$
+\end{center}
 \end{frame}
 
 \begin{frame}{Noisy, Unevenly Spaced Samples}
@@ -201,7 +299,8 @@ Find $\boldsymbol \omega$ via periodogram, then compute $(\textsf{\textbf{X}}^\t
 \end{figure} 
 \end{frame}
 
-\section{Objectives and Constraints for Model Discovery}
+\section{An Optimization View of Photometric Modeling}
+\subsection{Objectives and Constraints for Model Discovery}
 \begin{frame}{Objectives and Constraints for Model Discovery}
 We want
 \begin{itemize}
@@ -211,43 +310,44 @@ We want
 $$\min \left\| \boldsymbol{\hat \omega} \right\|_1 \text{ and } \min \left\| \mathbf{\hat{A}} \right\|_1$$ \pause
 
 \item To minimize loss between our model and the observations
-$$\min \left\| \mathbf m - \hat m(\mathbf t | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})\right\|_2$$ \pause
+$$\min \left\| \mathbf m - \hat m(\mathbf t ; \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})\right\|_2$$ \pause
 
 \item And to be within the bounds of measurement error
-$$|m_i - \hat m(t_i | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})| \leq \epsilon_i \text{ for all i}=1\ldots |\mathbf{m}| $$
+$$|m_i - \hat m(t_i ; \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})| \leq \epsilon_i \text{ for all i}=1\ldots |\mathbf{m}| $$
 
 \end{itemize}
 \end{frame}
 
-\section{An Optimization View of Photometric Modeling}
-\begin{frame}{An Optimization View of Photometric Modeling}
+\subsection{Optimization Formalization}
+\begin{frame}{An Optimization View of Light Curve Modeling}
 \vspace{-3mm}
-\begin{align*}
-&&(\boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi}) =
-  \underset{(\boldsymbol \omega, \mathbf A, \boldsymbol \Phi)}{\arg\min} &
+\begin{align*}%\hspace*{-10cm}
+(\boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi}) =
+  \underset{(\boldsymbol \omega, \mathbf A, \boldsymbol \Phi)}{\arg\min}& 
   \left(\left\|\boldsymbol \omega \right\|_1,
         \left\|\mathbf{A} \right\|_1,
-        \left\| \mathbf{m} - \hat m(\mathbf{t}, \boldsymbol \omega, \mathbf A, \boldsymbol \Phi)\right\|_2
+        \left\| \mathbf{m} - \hat m(\mathbf{t} ; \boldsymbol \omega, \mathbf A, \boldsymbol \Phi)\right\|_2
   \right) 
-\\ &&\text{such that } &
-  |m_i - \hat m(t_i | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi)| \leq \epsilon_i 
+\\ \text{such that } &
+  |m_i - \hat m(t_i ; \boldsymbol \omega, \mathbf A, \boldsymbol \Phi)| \leq \epsilon_i 
     \; \text{for all } i=1\ldots |\mathbf{m}|
-\\ &&\text{where } &
-  \hat m(t | \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) =
+\\ \text{where } &
+  \hat m(t ; \boldsymbol \omega, \mathbf A, \boldsymbol \Phi) =
     \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})}^{|\mathbf{A}|}
       A_{\mathbf{k}} \sin \left( \mathbf{k} \boldsymbol{\omega} t + \Phi_{\mathbf{k}} \right) 
 \end{align*}
-%\begin{overprint}
 \begin{center}
-\alt<2>{
+\begin{overlayarea}{0.9\textwidth}{0.5\textheight}
+\only<2>{
   \begin{block}{\textbf{Properties of the Optimization}}
     \begin{tabular}{r c p{6.5cm}}
-      \textbf{Multiobjective} &$\rightarrow$& Many criteria to optimize simultaneously\\
-      \textbf{Constrained} &$\rightarrow$& Solution must satisfy specific conditions \\
+      \textbf{Multiobjective} &$\rightarrow$& Many criteria to optimize at once \\
+      \textbf{Constrained} &$\rightarrow$& Solution must satisfy some conditions \\
       \textbf{Nonlinear} &$\rightarrow$& Constraints and objectives not directly proportional to inputs
     \end{tabular}
   \end{block}
-}{
+  }
+\only<1>{\begin{center}
 \begin{tabular}{c|c|c|c|c}
       \textbf{Variable} & \textbf{Type} & \textbf{Index} & \textbf{Meaning} & \textbf{Given?} \\ \hline\hline
       $\mathbf{t}$ & Vector & $i$ & Times of Observation & $\checkmark$ \\
@@ -255,11 +355,11 @@ $$|m_i - \hat m(t_i | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\h
       $\boldsymbol \epsilon$ & Vector & $i$ & Observation Errors & $\checkmark$ \\
       $\boldsymbol \omega$ & Vector & $j$ & Angular Frequencies & $\times$ \\
       $\mathbf A$ & Tensor & $\mathbf{k}$ & Amplitudes & $\times$ \\
-      $\boldsymbol \Phi$ & Tensor & $\mathbf{k}$ & Phases & $\times$ 
+      $\boldsymbol \Phi$ & Tensor & $\mathbf{k}$ & Phases & $\times$
     \end{tabular}
-}
+\end{center}}
+\end{overlayarea}
 \end{center}
-%\end{overprint}
 \end{frame}
 
 
@@ -274,38 +374,58 @@ $$|m_i - \hat m(t_i | \boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\h
 %\end{itemize}
 %\end{frame}
 
-\subsection{Scalarization, Linearization and Regularization}
-\begin{frame}{Scalarization of the Objectives}
-%We can reduce the complexity of our optimization problem by scalarizing our objectives with the Least Absolute Shrinkage and Selection Operator (LASSO):
-We can apply the Least Absolute Shrinkage and Selection Operator (LASSO) to scalarize our objectives:
-\begin{align*}(\boldsymbol{\hat \omega}, \mathbf {\hat A}, \boldsymbol{\hat \Phi})
-  = \underset{(\boldsymbol \omega, \mathbf A, \boldsymbol \Phi)}{\arg\min}
-  & \sum_i \left(m_i - \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})} A_{\mathbf{k}} \sin \left(\mathbf{k} \boldsymbol{\omega} t_i + \Phi_{\mathbf{k}} \right) \right)^2
-\\&+ \lambda \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})} |A_{\mathbf{k}}|
+%%\subsection{Scalarization, Linearization and Regularization}
+\subsection{A Probably Approximately Correct Approach}
+\begin{frame}{Scalarization, Linearization, and Regularization}
+%%We can reduce the complexity of our optimization problem by scalarizing our objectives with the Least Absolute Shrinkage and Selection Operator (LASSO):
+If we can independently solve for the fundamental frequencies $\boldsymbol \omega$, then we may scalarize our objective function like so:
+\begin{align*}
+%(\mathbf {\hat A}, \boldsymbol{\hat \Phi})
+%  = \underset{(\mathbf A, \boldsymbol \Phi)}{\arg\min}
+%  & \sum_i \left(m_i - 
+%      \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})} 
+%        A_{\mathbf{k}} \sin \left(\mathbf{k} \boldsymbol{\omega} t_i + \Phi_{\mathbf{k}} \right)
+%    \right)^2
+%\\&+ \lambda \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})} |A_{\mathbf{k}}|
+(\mathbf {\hat A}, \mathbf{\hat B})
+  = \underset{(\mathbf A, \mathbf B)}{\arg\min}
+  & \sum_i \left(m_i - 
+      \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})} 
+        A_{\mathbf{k}} \sin \left(\mathbf{k} \boldsymbol{\omega} t_i \right)
+      + B_{\mathbf{k}} \cos \left(\mathbf{k} \boldsymbol{\omega} t_i \right)
+    \right)^2
+\\&+ \lambda \sum_{(k_1, \dots, k_{|\boldsymbol{\omega}|})} |A_{\mathbf{k}}| + |B_{\mathbf{k}}|
 \end{align*}
-where the shrinkage parameter $\lambda$ can be chosen e.g.~via cross-validation. 
-\vspace{3mm}
+where $\lambda$ is a shrinkage parameter which can be chosen e.g.~via cross-validation. 
+%\vspace{3mm}
+%\begin{thebibliography}{1}
+%  \beamertemplatearticlebibitems
+%  \bibitem{lasso}
+%    Robert Tibshirani
+%    \newblock Regression Shrinkage and Selection via the Lasso
+%    \newblock {\em Journal of the Royal Statistical Society}, 1996
+%    \end{thebibliography}
+\end{frame}
+
+\begin{frame}{Solving the Approximate Optimization Problem}
+\begin{block}{The LASSO Solution}
+We can use the coefficient matrix $\mathbf X$ from before to solve
+$$\mathbf{\hat w} = \underset{\mathbf w}{\arg\min} \; \| \mathbf {m} - \mathbf {X} \mathbf {w} \|_2 + \lambda \| \mathbf{w} \|_1$$
+using e.g.~coordinate descent.% (Wu, Tong, and Lange, 2008).
+\end{block}
+\vspace{5mm}
 \begin{thebibliography}{1}
   \beamertemplatearticlebibitems
   \bibitem{lasso}
     Robert Tibshirani
     \newblock Regression Shrinkage and Selection via the Lasso
     \newblock {\em Journal of the Royal Statistical Society}, 1996
-    \end{thebibliography}
+\end{thebibliography}
+%The entries of $\mathbf{\hat S}$ and $\mathbf{\hat C}$ can be found in successive columns of $\mathbf{\hat{w}}$, and finally $\mathbf{\hat A}$ and $\boldsymbol{\hat{\Phi}}$ can be restored using with
+%$$A_{\mathbf{k}} = \sqrt{S_{\mathbf{k}}^2 + C_{\mathbf{k}}^2} \; \text{ and } \; \Phi_{\mathbf{k}} = \tan^{-1} \left(\frac{C_{\mathbf{k}}}{S_{\mathbf{k}}}\right).$$
 \end{frame}
 
-\subsection{Solving the Approximate Optimization Problem}
-\begin{frame}{Solving the Approximate Optimization Problem}
-\begin{block}{The LASSO Solution}
-We can now use the coefficient matrix $\mathbf X$ from before to solve
-$$\mathbf{\hat w} = \underset{\mathbf w}{\arg\min} \; \| \mathbf {m} - \mathbf {X} \mathbf {w} \|_2 + \lambda \| \mathbf{w} \|_1$$
-using e.g.~coordinate descent (Wu, Tong, and Lange, 2008).
-\end{block}
-\vspace{5mm}
-The entries of $\mathbf{\hat S}$ and $\mathbf{\hat C}$ can be found in successive columns of $\mathbf{\hat{w}}$, and finally $\mathbf{\hat A}$ and $\boldsymbol{\hat{\Phi}}$ can be restored using with
-$$A_{\mathbf{k}} = \sqrt{S_{\mathbf{k}}^2 + C_{\mathbf{k}}^2} \; \text{ and } \; \Phi_{\mathbf{k}} = \tan^{-1} \left(\frac{C_{\mathbf{k}}}{S_{\mathbf{k}}}\right).$$
-\end{frame}
-
+%\subsection{Back to the Example}
 \begin{frame}{Least Squares Fit}
 \begin{figure}
 \centering
@@ -320,8 +440,8 @@ $$A_{\mathbf{k}} = \sqrt{S_{\mathbf{k}}^2 + C_{\mathbf{k}}^2} \; \text{ and } \;
 \end{figure} 
 \end{frame}
 
-\subsection{To the Stars!}
-
+\section{To the Stars!}
+\subsection{Singly-Periodic Stars}
 \begin{frame}{Phase Plot of OGLE-LMC-CEP-0209}
 \makebox[\textwidth][c]{\input{OGLE-LMC-CEP-0209-phased.tikz}}
 \end{frame}
@@ -330,7 +450,7 @@ $$A_{\mathbf{k}} = \sqrt{S_{\mathbf{k}}^2 + C_{\mathbf{k}}^2} \; \text{ and } \;
 \makebox[\textwidth][c]{\input{OGLE-LMC-CEP-0209-ols.tikz}}
 \end{frame}
 
-\begin{frame}{LASSO}
+\begin{frame}{LASSO Fit}
 \makebox[\textwidth][c]{\input{OGLE-LMC-CEP-0209-lasso.tikz}}
 \end{frame}
 
@@ -341,7 +461,7 @@ $$A_{\mathbf{k}} = \sqrt{S_{\mathbf{k}}^2 + C_{\mathbf{k}}^2} \; \text{ and } \;
   %\resizebox{\textwidth}{0.35\textheight}{
   \adjustbox{max height=\dimexpr\textheight-5cm\relax,
              max width=\textwidth}{
-    \begin{tabular}{c c r c c l}\hline %{ c c c c c c } 
+    \begin{tabular}{c c r c c l} %{ c c c c c c } 
 \textbf{Galaxy} & \textbf{Type} & \textbf{\# Stars} & \textbf{Median Lasso} $\mathbf{R^2}$ & \textbf{Median Baart} $\mathbf{R^2}$ & \textbf{Significance*} \\ \hline \hline
 (all)&(all)&51018&0.8654 &0.8550 &$p< 0.001$\\
 (all)&CEP&7448&0.9833 &0.9826 &$p= 0.00862 $\\
@@ -368,6 +488,7 @@ BLG&RRLYR&16744&0.9583 &0.9533 &$p< 0.001$\\ \hline
 %\end{table*}
 \end{frame}
 
+\subsection{Multi-Periodic Stars}
 \begin{frame}{OGLE-BLG-RRLYR-00319 (mode RRd)}
 \makebox[\textwidth][c]{\input{OGLE-BLG-RRLYR-00319-phased-ts.tikz}}
 \end{frame}
@@ -376,61 +497,63 @@ BLG&RRLYR&16744&0.9583 &0.9533 &$p< 0.001$\\ \hline
 \makebox[\textwidth][c]{\input{OGLE-LMC-CEP-2147-phased-ts.tikz}}
 \end{frame}
 
-%\begin{frame}{OGLE-LMC-CEP-2147 (mode 1O/2O/3O)}
-%\makebox[\textwidth][c]{\input{OGLE-LMC-CEP-2147-phased-ts.tikz}}
-%\end{frame}
+\begin{frame}{Plotypus}
+%\begin{center}
+%\begin{tabular}{cc}
+\begin{columns}[c]
+\column{.02\textwidth}
+\column{.9\textwidth}
+\begin{columns}[c]
+\column{.25\textwidth}
+\includegraphics[width=\textwidth,keepaspectratio]{icon.png} \\ % &
+\includegraphics[width=\textwidth,keepaspectratio]{plotypus_qr.png}
+\column{.67\textwidth}
+\begin{itemize}
+\item Open source 
+\item Version controlled 
+\item Stable \& development branches 
+\item Documented 
+\item Configurable 
+\item Parallel 
+\end{itemize}
+\end{columns}
+%\end{tabular}
+\begin{thebibliography}{1}
+  \beamertemplatearticlebibitems
+  \bibitem{plotypus}
+    Earl Bellinger, Daniel Wysocki, and Shashi Kanbur
+    \newblock Plotypus: light curve analysis in Python
+    \newblock \url{https://astroswego.github.io/plotypus/}
+\end{thebibliography}
+%\end{center}
+\end{columns}
+\end{frame}
 
-%\begin{frame}{OGLE-LMC-CEP-0432 (mode F/1O)}
-%\begin{figure}
-%\input{OGLE-LMC-CEP-0432-photometry.tikz}
-%\end{figure} 
-%\end{frame}
+\subsection{Implications \& Applications}
+\begin{frame}{Missing Harmonics}
+\makebox[\textwidth][c]{\input{OGLE-LMC-CEP-1406-phased.tikz}}
+\end{frame}
 
-%\begin{frame}{OGLE-LMC-CEP-2147}
-%\begin{figure}
-%\input{OGLE-LMC-CEP-2147-phased.tikz}
-%\end{figure} 
-%\end{frame}
+\begin{frame}{Leavitt's Law at Phase 0 (Maximum Light)}
+\includegraphics[width=\textwidth,keepaspectratio]{000.pdf}
+\end{frame}
 
-%\begin{frame}{Leavitt's Law in the SMC and LMC}
-%\begin{figure}
-%\centering
-%\includegraphics[height=0.8\textheight,keepaspectratio]{mean-light-pl.png}
-%\end{figure}
-%\end{frame}
+\begin{frame}{Leavitt's Law at Phase 83}
+\includegraphics[width=\textwidth,keepaspectratio]{083.pdf}
+\end{frame}
 
-%\begin{frame}{Mean Light Difference Between SMC and LMC}
-%\begin{figure}
-%\centering
-%\includegraphics[height=0.8\textheight,keepaspectratio]{pl-difference.png}
-%\end{figure}
-%\end{frame}
+\begin{frame}{Median Period-Luminosity Difference at Mean Light}
+\includegraphics[width=\textwidth,keepaspectratio]{mean-light-pl-difference.pdf}
+\end{frame}
 
-%\begin{frame}{Multiphase Difference Between SMC and LMC}
-%\begin{figure}
-%\centering
-%\includegraphics[height=0.8\textheight,keepaspectratio]{pl-difference-2.png}
-%\end{figure}
-%\end{frame}
+\begin{frame}{Multiphase Period-Luminosity Difference}
+\includegraphics[width=\textwidth,keepaspectratio]{multiphase-pl-difference.pdf}
+\end{frame}
 
-\begin{frame}{Thanks for your attention!}
-\begin{center} \textbf{Questions?} \end{center}
-%\begin{block}{Acknowledgements}
-%This is a joint work with Professor Shashi M. Kanbur and Daniel Wysocki at SUNY Oswego.
-%\end{block}
-
-  \begin{center}
-  %\begin{tabular}{ | C{2.6cm} | C{1.3cm} | C{1.3cm} | C{2.6cm} |} \hline
-  \begin{tabular}{>{\centering\arraybackslash}p{2.6cm} 
-                   >{\centering\arraybackslash}p{1.5cm} 
-                   >{\centering\arraybackslash}p{1.5cm} 
-                   >{\centering\arraybackslash}p{2.6cm}} 
-    \includegraphics[height=1.8cm,keepaspectratio]{oswego.jpg} &
-    \includegraphics[height=1.8cm,keepaspectratio]{iu.png} &
-    \includegraphics[height=1.8cm,keepaspectratio]{iucaa.jpg} &
-    \raisebox{.05\height}{\includegraphics[width=2.58cm,height=1.5cm]{nist.png}} 
-\end{tabular}
-\end{center}
+\section{The}
+\subsection{End.}
+\begin{frame}{Questions?}
+\begin{center} \textbf{Thanks for your attention!} \end{center}
 \end{frame}
 
 \end{document}
