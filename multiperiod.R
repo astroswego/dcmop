@@ -103,12 +103,17 @@ fit_lightcurve <- function(filename, periods=1, t0s=0,
     if (show_plot) {
         ## phase plots
         if (length(periods) %% 2 == 0) {
-            mf_col <- c((length(periods)+2)/2, 2)
+            #par(mfcol=c((length(periods)+2)/2, 2), cex=par()$cex)
+            layout(matrix(c(1:length(periods), 
+                            length(periods)+1, length(periods)+2),
+                          ncol=2, byrow=TRUE))
         } else {
-            mf_col <- c(1, length(periods)+2)
+            layout(matrix(c(rep(1:length(periods), each=2), 
+                            rep(length(periods)+1, 3),
+                            rep(length(periods)+2, 3)),
+                          ncol=6, byrow=TRUE))
         }
-        par(las=1, mar=c(4, 4, 3, 1), mgp=c(2.75, 0.25, 0), 
-            mfcol=mf_col, cex=par()$cex)
+        par(las=1, mar=c(4, 4, 3, 1), mgp=c(2.75, 0.25, 0), cex=par()$cex)
         for (ii in 1:length(periods)) {
             t0 <- ifelse(length(t0s) == length(periods), t0s[ii], t0)
             phase <- ((photometry$t-t0) %% periods[ii])/periods[ii]
@@ -185,9 +190,15 @@ fit_lightcurve <- function(filename, periods=1, t0s=0,
     }
 }
 
-fit_lightcurve('OGLE-LMC-CEP-0002.dat', 3.118120, 2171.239,
-               save_dir='multiplots', output='.pdf')
+#fit_lightcurve('OGLE-LMC-CEP-0002.dat', 3.118120, 2171.239,
+#               save_dir='multiplots', output='.png')
 
 fit_lightcurve('OGLE-SMC-CEP-0408.dat', 
                c(1.7901765, 1.3140538), c(624.75372, 624.97043),
+               save_dir='multiplots', output='.png')
+
+fit_lightcurve('OGLE-SMC-CEP-3867.dat', 
+               c(0.2688471, 0.2173800, 0.1824204), 
+               c(2104.60491, 2104.81172, 2104.72340),
                save_dir='multiplots', output='.pdf')
+
