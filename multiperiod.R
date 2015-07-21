@@ -76,17 +76,9 @@ plot_single <- function(period, photometry, phase, m_even, m_hat, filename) {
 
 plot_multiple <- function(periods, photometry, m_hat, filename, t0s=0) {
     ## phase plots
-    if (length(periods) %% 2 == 0) {
-        #par(mfcol=c((length(periods)+2)/2, 2), cex=par()$cex)
-        layout(matrix(c(1:length(periods), 
-                        length(periods)+1, length(periods)+2),
-                      ncol=2, byrow=TRUE))
-    } else {
-        layout(matrix(c(rep(1:length(periods), each=2), 
-                        rep(length(periods)+1, 3),
-                        rep(length(periods)+2, 3)),
-                      ncol=6, byrow=TRUE))
-    }
+    layout(matrix(c(if (length(periods) %% 2 == 0) 1 else c(1,1),
+                    2:length(periods), length(periods)+1, length(periods)+2),
+                  ncol=2, byrow=TRUE))
     par(las=1, mar=c(4, 4, 3, 1), mgp=c(2.75, 0.25, 0), cex=par()$cex)
     for (ii in 1:length(periods)) {
         t0 <- ifelse(length(t0s) == length(periods), t0s[ii], t0)
@@ -203,4 +195,3 @@ fit_lightcurve('OGLE-SMC-CEP-3867.dat',
                c(0.2688471, 0.2173800, 0.1824204), 
                c(2104.60491, 2104.81172, 2104.72340),
                save_dir='multiplots', output_fmt='.png')
-
