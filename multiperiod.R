@@ -139,15 +139,17 @@ fit_single <- function(photometry, period=1, t0=0, n_lambda=nlambda) {
     cvfit <- cv.glmnet(Fourier_phase, photometry$m, nlambda=n_lambda)
     m_hat <- predict(cvfit, newx=Fourier_phase, s="lambda.min", exact=TRUE)
     m_even <- predict(cvfit, newx=evenly_spaced, s="lambda.min", exact=TRUE)
-    return(list(m_even=m_even, m_hat=m_hat, cvfit=cvfit, phase=phase))
+    mse <- cvfit$cvm[cvfit$lambda == cvfit$lambda.min]
+    return(list(m_even=m_even, m_hat=m_hat, cvfit=cvfit, phase=phase, mse=mse))
 }
 
 fit_multiple <- function(photometry, periods, n_lambda=nlambda) {
     Fourier_space <- Fourier(photometry$t, periods)
     cvfit <- cv.glmnet(Fourier_space$X, photometry$m, nlambda=n_lambda)
     m_hat <- predict(cvfit, newx=Fourier_space$X, s="lambda.min", exact=TRUE)
+    mse <- cvfit$cvm[cvfit$lambda == cvfit$lambda.min]
     return(list(m_hat=m_hat, cvfit=cvfit, freqs=Fourier_space$freqs,
-                coefs=coef(cvfit)))
+                coefs=coef(cvfit), mse=mse))
 }
 
 fit_lightcurve <- function(filename, periods=1, t0s=0, show_plot=TRUE, 
