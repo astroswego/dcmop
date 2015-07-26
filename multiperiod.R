@@ -24,6 +24,50 @@ Fourier <- function(t=phases, p=1, Nmax=N_max) {
     }
     return(list(X=X, freqs=freqs))
 }
+
+fourier_series <- function(t, theta) {
+    # returns the fourier series with parameters `theta`,
+    # evaluated at each time `t`
+}
+
+fourier_gradient <- function(photometry, theta) {
+    # returns the fourier Jacobian vector
+}
+
+fourier_hessian <- function(photometry, theta) {
+    # returns the fourier Hessian matrix
+}
+
+theta_size <- function(Nperiods, Nmax) {
+    A_Phi_size <- (2*Nmax)^Nperiods
+    
+    2*A_Phi_size + Nperiods
+}
+
+get_periods <- function(photometry, Nperiods, Nmax) {
+    E <- function(theta) {
+        res <- theta$lambda*norm(theta$A, "2") +
+               norm(photometry$m - fourier_series(photometry$t, theta), "2")
+
+        # attach Gradient and Hessian as attributes to output,
+        # as `nlm` looks for "gradient" and "hessian" attributes to the return
+        # value of the function
+        attr(res, "gradient") <- function(theta) {
+            fourier_gradient(photometry, theta, Nperiods, Nmax)
+        }
+        attr(res, "hessian") <- function(theta) {
+            fourier_hessian(photometry, theta, Nperiods, Nmax)
+        }
+
+        res
+    }
+    
+    res <- nlm(E, theta_size(Nperiods, Nmax))
+    
+    res$estimate
+}
+
+
 evenly_spaced <- Fourier()$X
 
 start_devices <- function(save_dir, filename, plot_name, output_fmt) {
